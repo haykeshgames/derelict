@@ -22,6 +22,8 @@ export class Level1 extends Scene {
         this.physics.add.collider(this.player, this.wallsLayer);
 
         this.initChests();
+
+        this.initCamera();
     }
 
     update() : void {
@@ -63,5 +65,11 @@ export class Level1 extends Scene {
             this.cameras.main.flash();
           });
         });
+    }
+
+    private initCamera(): void {
+      this.cameras.main.setSize(this.game.scale.width, this.game.scale.height);
+      this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
+      this.cameras.main.setZoom(2);
     }
 }
