@@ -1,4 +1,6 @@
+import { Level1 } from '../scenes';
 import { Actor } from "./Actor";
+import { Bullet } from './Bullet';
 
 export class Player extends Actor {
     private keyW : Phaser.Input.Keyboard.Key;
@@ -6,8 +8,16 @@ export class Player extends Actor {
     private keyS : Phaser.Input.Keyboard.Key;
     private keyD : Phaser.Input.Keyboard.Key;
 
+    // Time the last bullet was fired
+    private lastFireTime : number;
+
+    // How often we can fire (ms)
+    private fireRate = 200;
+
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, 'king')
+        super(scene, x, y, 'king');
+
+        this.lastFireTime = Date.now();
 
         // Keys
         this.keyW = this.scene.input.keyboard.addKey('W');
@@ -61,6 +71,24 @@ export class Player extends Actor {
             this.checkFlip();
             this.getBody().setOffset(15, 15);
             if (!this.anims.isPlaying) this.anims.play('run', true)
+        }
+
+        // Pew Pew!
+        const {activePointer} = this.scene.input;
+        if (activePointer.leftButtonDown() && (Date.now() - this.lastFireTime) >= this.fireRate) {
+            const {worldX, worldY} = activePointer,
+                {x, y} = this,
+                startVec = new Phaser.Math.Vector2(x, y),
+                targetVec = new Phaser.Math.Vector2(worldX, worldY),
+                dir = targetVec.subtract(startVec).normalize();
+
+            // Spawn a bullet!
+            // TODO: We need a base scene class for managing our game objects
+            const scene = this.scene as Level1;
+            scene.spawnBullet(x, y, dir);
+            
+
+            this.lastFireTime = Date.now();
         }
     }
 }

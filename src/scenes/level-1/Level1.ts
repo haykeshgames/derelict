@@ -3,6 +3,7 @@ import { Player } from "../../classes/Player";
 import { gameObjectsToObjectPoints } from '../../helpers/gameobject-to-object-point';
 import { EVENTS_NAME } from "../../consts";
 import { Enemy } from "../../classes/enemy";
+import { Bullet } from '../../classes/Bullet';
 
 export class Level1 extends Scene {
     private player !: Player;
@@ -45,6 +46,21 @@ export class Level1 extends Scene {
         this.physics.world.setBounds(0, 0, this.wallsLayer.width, this.wallsLayer.height);
 
         this.showDebugWalls();
+    }
+
+    spawnBullet(x: number, y: number, direction: Phaser.Math.Vector2) {
+      const bullet = new Bullet(this, x, y, direction, 'tiles_spr', 469)
+      .setScale(0.8)
+      .setName(`bullet_${Date.now()}`);
+
+      this.physics.add.collider(bullet, this.enemies, (bullet, enemy) => {
+          enemy.destroy();
+          bullet.destroy();
+
+          this.enemies = this.enemies.filter(it => it !== enemy);
+      });
+
+      return bullet;
     }
 
     private showDebugWalls() : void {
