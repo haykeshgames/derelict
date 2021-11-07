@@ -1,5 +1,6 @@
 import { GameObjects, Scene, Tilemaps } from "phaser";
 import { Player } from "../../classes/Player";
+import { gameObjectsToObjectPoints } from '../../helpers/gameobject-to-object-point';
 
 export class Level1 extends Scene {
     private player !: Player;
@@ -19,6 +20,8 @@ export class Level1 extends Scene {
         // Create the player
         this.player = new Player(this, 100, 100);
         this.physics.add.collider(this.player, this.wallsLayer);
+
+        this.initChests();
     }
 
     update() : void {

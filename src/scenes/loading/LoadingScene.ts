@@ -17,7 +17,7 @@ export class LoadingScene extends Scene {
         this.load.atlas('a-king', 'spritesheets/a-king.png', 'spritesheets/a-king_atlas.json');
 
         this.load.image({key: 'tiles', url: 'tilemaps/tiles/dungeon-16-16.png'});
-        this.load.tilemapTiledJSON('dungeon', 'tilemaps/json/level1_chests.json');
+        this.load.tilemapTiledJSON('dungeon', 'tilemaps/json/level1.json');
         this.load.spritesheet('tiles_spr', 'tilemaps/tiles/dungeon-16-16.png', {
             frameWidth: 16,
             frameHeight: 16,
