@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="6">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="10">
  <editorsettings>
   <export target="../src/assets/tilemaps/json/level1.json" format="json"/>
  </editorsettings>
@@ -5191,6 +5191,20 @@
    <point/>
   </object>
   <object id="5" name="ChestPoint" x="516" y="335">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="Enemies">
+  <object id="6" name="EnemyPoint" x="279" y="290">
+   <point/>
+  </object>
+  <object id="7" name="EnemyPoint" x="765" y="309">
+   <point/>
+  </object>
+  <object id="8" name="EnemyPoint" x="533" y="493">
+   <point/>
+  </object>
+  <object id="9" name="EnemyPoint" x="524" y="157">
    <point/>
   </object>
  </objectgroup>
