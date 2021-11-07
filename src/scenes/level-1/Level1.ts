@@ -7,6 +7,7 @@ export class Level1 extends Scene {
     private tileSet !: Tilemaps.Tileset;
     private groundLayer !: Tilemaps.TilemapLayer;
     private wallsLayer !: Tilemaps.TilemapLayer;
+    private chests !: Phaser.GameObjects.Sprite[];
     
     constructor() {
         super('level-1-scene');
@@ -42,5 +43,22 @@ export class Level1 extends Scene {
             tileColor: null,
             collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255)
         })
+    }
+
+    private initChests(): void {
+        const chestPoints = gameObjectsToObjectPoints(
+          this.map.filterObjects('Chests', obj => obj.name === 'ChestPoint'),
+        );
+      
+        this.chests = chestPoints.map(chestPoint =>
+          this.physics.add.sprite(chestPoint.x, chestPoint.y, 'tiles_spr', 595).setScale(1.5),
+        );
+      
+        this.chests.forEach(chest => {
+          this.physics.add.overlap(this.player, chest, (obj1, obj2) => {
+            obj2.destroy();
+            this.cameras.main.flash();
+          });
+        });
     }
 }
