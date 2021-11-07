@@ -27,5 +27,6 @@ export class LoadingScene extends Scene {
     // Called when the scene is created
     create(): void {
         this.scene.start('level-1-scene');
+        this.scene.start('ui-scene');
     }
 }
