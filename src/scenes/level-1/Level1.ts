@@ -1,6 +1,7 @@
 import { GameObjects, Scene, Tilemaps } from "phaser";
 import { Player } from "../../classes/Player";
 import { gameObjectsToObjectPoints } from '../../helpers/gameobject-to-object-point';
+import { EVENTS_NAME } from "../../consts";
 
 export class Level1 extends Scene {
     private player !: Player;
@@ -61,6 +62,7 @@ export class Level1 extends Scene {
       
         this.chests.forEach(chest => {
           this.physics.add.overlap(this.player, chest, (obj1, obj2) => {
+            this.game.events.emit(EVENTS_NAME.chestLoot);
             obj2.destroy();
             this.cameras.main.flash();
           });
