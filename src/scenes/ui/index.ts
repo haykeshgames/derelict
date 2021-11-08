@@ -39,6 +39,13 @@ export class UIScene extends Scene {
           this.game.scale.width / 2 - this.gameEndPhrase.width / 2,
           this.game.scale.height * 0.4,
         );
+
+        this.input.on('pointerdown', () => {
+            this.game.events.off(EVENTS_NAME.chestLoot, this.chestLootHandler);
+            this.game.events.off(EVENTS_NAME.gameEnd, this.gameEndHandler);
+            this.scene.get('level-1-scene').scene.restart();
+            this.scene.restart();
+        });
     };
   }
 
