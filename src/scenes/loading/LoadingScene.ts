@@ -23,7 +23,7 @@ export class LoadingScene extends Scene {
             frameHeight: 16,
         });
 
-        this.load.audio('bgmusic', 'music/bg.mp3')
+        this.load.audio('bgmusic', 'music/bg.mp3');
         this.load.audio('fire', 'sfx/laser.wav');
         this.load.audio('death', 'sfx/death.wav');
         this.load.audio('pickup', 'sfx/pickup.wav');

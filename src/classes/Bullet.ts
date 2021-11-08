@@ -2,7 +2,7 @@ import { Actor } from './Actor';
 import { Player } from './Player';
 
 export class Bullet extends Actor {
-    private SPEED = 150;
+    private SPEED = 500;
     private MAX_TRAVEL = 350;
     private startPosition : Phaser.Math.Vector2;
 

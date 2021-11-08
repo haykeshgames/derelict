@@ -14,9 +14,13 @@ export class Player extends Actor {
     private lastFireTime : number;
 
     // How often we can fire (ms)
-    private fireRate = 200;
+    private fireRate = 100;
+
+    // How fast we move
+    private speed = 250;
 
     private hpValue: Text;
+
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'king');
@@ -57,29 +61,33 @@ export class Player extends Actor {
     update() : void {
         this.getBody().setVelocity(0);
 
+        let xDir = 0, yDir = 0;
         if (this.keyW?.isDown) {
-            this.body.velocity.y = -110;
+            yDir = -1;
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
         if (this.keyA?.isDown) {
-            this.body.velocity.x = -110;
+            xDir = -1;
             this.checkFlip();
             this.getBody().setOffset(48, 15);
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
         if (this.keyS?.isDown) {
-            this.body.velocity.y = 110;
+            yDir = 1;
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
         if (this.keyD?.isDown) {
-            this.body.velocity.x = 110;
+            xDir = 1;
             this.checkFlip();
             this.getBody().setOffset(15, 15);
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
+
+        const velocity = new Phaser.Math.Vector2(xDir, yDir).normalize().scale(this.speed);
+        this.getBody().setVelocity(velocity.x, velocity.y);
 
         // Pew Pew!
         const {activePointer} = this.scene.input;
