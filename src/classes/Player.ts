@@ -2,6 +2,7 @@ import { Level1 } from '../scenes';
 import { Actor } from "./Actor";
 import { Bullet } from './Bullet';
 import { Text } from './text';
+import { EVENTS_NAME, GameStatus } from '../consts';
 
 export class Player extends Actor {
     private keyW : Phaser.Input.Keyboard.Key;
@@ -105,5 +106,9 @@ export class Player extends Actor {
     public getDamage(value?: number): void {
         super.getDamage(value);
         this.hpValue.setText(this.hp.toString());
+
+        if (this.hp <= 0) {
+            this.scene.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.LOSE);
+        }
     }
 }
