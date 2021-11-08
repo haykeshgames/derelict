@@ -1,8 +1,11 @@
 import { Game, Types } from 'phaser';
 import { Level1, LoadingScene, UIScene} from './scenes';
 
+type GameConfigExtended = Types.Core.GameConfig & {
+    winScore: number;
+};
 
-const gameConfig: Types.Core.GameConfig = {
+export const gameConfig: GameConfigExtended = {
     title: 'Derelict',
     type: Phaser.AUTO,
     parent: 'game',         // element id to render the game into
@@ -32,7 +35,8 @@ const gameConfig: Types.Core.GameConfig = {
     audio: {
         disableWebAudio: false
     },
-    scene: [LoadingScene, Level1, UIScene]
+    scene: [LoadingScene, Level1, UIScene],
+    winScore: 40,
 };
 
 window.sizeChanged = () => {
