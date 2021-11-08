@@ -1,6 +1,7 @@
 import { Level1 } from '../scenes';
 import { Actor } from "./Actor";
 import { Bullet } from './Bullet';
+import { Text } from './text';
 
 export class Player extends Actor {
     private keyW : Phaser.Input.Keyboard.Key;
@@ -13,6 +14,8 @@ export class Player extends Actor {
 
     // How often we can fire (ms)
     private fireRate = 200;
+
+    private hpValue: Text;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'king');
@@ -30,6 +33,10 @@ export class Player extends Actor {
         this.getBody().setOffset(8, 0);
 
         this.initAnimations();
+
+        this.hpValue = new Text(this.scene, this.x, this.y - this.height, this.hp.toString())
+            .setFontSize(12)
+            .setOrigin(0.8, 0.5);
     }
 
     private initAnimations() : void {
@@ -90,5 +97,13 @@ export class Player extends Actor {
 
             this.lastFireTime = Date.now();
         }
+
+        this.hpValue.setPosition(this.x, this.y - this.height * 0.4);
+        this.hpValue.setOrigin(0.8, 0.5);
+    }
+
+    public getDamage(value?: number): void {
+        super.getDamage(value);
+        this.hpValue.setText(this.hp.toString());
     }
 }
