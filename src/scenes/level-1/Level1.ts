@@ -53,9 +53,12 @@ export class Level1 extends Scene {
       .setScale(0.8)
       .setName(`bullet_${Date.now()}`);
 
+      this.sound.play('fire');
+
       this.physics.add.collider(bullet, this.enemies, (bullet, enemy) => {
           enemy.destroy();
           bullet.destroy();
+          this.sound.play('death');
 
           this.enemies = this.enemies.filter(it => it !== enemy);
       });
@@ -85,6 +88,7 @@ export class Level1 extends Scene {
             this.game.events.emit(EVENTS_NAME.chestLoot);
             obj2.destroy();
             this.cameras.main.flash();
+            this.sound.play('pickup');
           });
         });
     }

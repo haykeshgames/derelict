@@ -22,11 +22,19 @@ export class LoadingScene extends Scene {
             frameWidth: 16,
             frameHeight: 16,
         });
+
+        this.load.audio('bgmusic', 'music/bg.mp3')
+        this.load.audio('fire', 'sfx/laser.wav');
+        this.load.audio('death', 'sfx/death.wav');
+        this.load.audio('pickup', 'sfx/pickup.wav');
     }
 
     // Called when the scene is created
     create(): void {
         this.scene.start('level-1-scene');
         this.scene.start('ui-scene');
+
+        // Play some bg music
+        this.sound.play('bgmusic', {loop: true, volume: 0.5})
     }
 }
