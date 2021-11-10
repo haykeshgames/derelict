@@ -34,8 +34,8 @@ export class Player extends Actor {
         this.keyD = this.scene.input.keyboard.addKey('D');
 
         // Physics
-        this.getBody().setSize(30, 30);
-        this.getBody().setOffset(8, 0);
+        this.getBody().setSize(12, 16);
+        this.getBody().setOffset(10,16);
 
         this.initAnimations();
 
@@ -70,7 +70,6 @@ export class Player extends Actor {
         if (this.keyA?.isDown) {
             xDir = -1;
             this.checkFlip();
-            this.getBody().setOffset(48, 15);
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
@@ -82,7 +81,6 @@ export class Player extends Actor {
         if (this.keyD?.isDown) {
             xDir = 1;
             this.checkFlip();
-            this.getBody().setOffset(15, 15);
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
