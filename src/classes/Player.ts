@@ -3,6 +3,8 @@ import { Actor } from "./Actor";
 import { Bullet } from './Bullet';
 import { Text } from './text';
 import { EVENTS_NAME, GameStatus } from '../consts';
+import { AutoRifle } from './AutoRifle';
+import { Weapon } from './Weapon';
 
 export class Player extends Actor {
     private keyW : Phaser.Input.Keyboard.Key;
@@ -10,22 +12,18 @@ export class Player extends Actor {
     private keyS : Phaser.Input.Keyboard.Key;
     private keyD : Phaser.Input.Keyboard.Key;
 
-    // Time the last bullet was fired
-    private lastFireTime : number;
-
-    // How often we can fire (ms)
-    private fireRate = 100;
-
     // How fast we move
     private speed = 250;
 
     private hpValue: Text;
 
+    private weapon : Weapon;
+
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
 
-        this.lastFireTime = Date.now();
+        this.weapon = new AutoRifle(scene, this);
 
         // Keys
         this.keyW = this.scene.input.keyboard.addKey('W');
@@ -87,23 +85,8 @@ export class Player extends Actor {
         const velocity = new Phaser.Math.Vector2(xDir, yDir).normalize().scale(this.speed);
         this.getBody().setVelocity(velocity.x, velocity.y);
 
-        // Pew Pew!
-        const {activePointer} = this.scene.input;
-        if (activePointer.leftButtonDown() && (Date.now() - this.lastFireTime) >= this.fireRate) {
-            this.anims.play('attack', true);
-            const {worldX, worldY} = activePointer,
-                {x, y} = this,
-                startVec = new Phaser.Math.Vector2(x, y),
-                targetVec = new Phaser.Math.Vector2(worldX, worldY),
-                dir = targetVec.subtract(startVec).normalize();
-
-            // Spawn a bullet!
-            // TODO: We need a base scene class for managing our game objects
-            const scene = this.scene as Level1;
-            scene.spawnBullet(x, y, dir);
-            
-
-            this.lastFireTime = Date.now();
+        if (this.weapon.update()) {
+            this.anims.play('attack');
         }
 
         this.hpValue.setPosition(this.x, this.y - this.height * 0.4);

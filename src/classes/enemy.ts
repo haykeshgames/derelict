@@ -1,4 +1,5 @@
 import { Math, Scene } from 'phaser';
+import { Level1 } from '../scenes';
 
 import { Actor } from './Actor';
 import { Player } from './Player';
@@ -8,7 +9,7 @@ export class Enemy extends Actor {
   private AGRESSOR_RADIUS = 100;
 
   constructor(
-    scene: Phaser.Scene,
+    scene: Level1,
     x: number,
     y: number,
     texture: string,
@@ -19,8 +20,9 @@ export class Enemy extends Actor {
     this.target = target;
 
     // ADD TO SCENE
-    scene.add.existing(this);
-    scene.physics.add.existing(this);
+    scene.addEnemy(this);
+
+    // Add to enemies group
 
     // PHYSICS MODEL
     this.getBody().setSize(16, 16);

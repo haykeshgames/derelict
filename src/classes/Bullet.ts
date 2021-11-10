@@ -1,13 +1,20 @@
+import { Level1 } from '../scenes';
 import { Actor } from './Actor';
+import { Enemy } from './enemy';
 import { Player } from './Player';
 
 export class Bullet extends Actor {
     private SPEED = 500;
     private MAX_TRAVEL = 350;
     private startPosition : Phaser.Math.Vector2;
+    private sparksManager !: Phaser.GameObjects.Particles.ParticleEmitterManager;
+
+    get hitWallSound() : Phaser.Sound.BaseSound {
+        return this.scene.sound.get('bulletHitWall');
+    }
 
     constructor(
-        scene: Phaser.Scene,
+        scene: Level1,
         x: number, 
         y: number,
         direction: Phaser.Math.Vector2,
@@ -18,15 +25,37 @@ export class Bullet extends Actor {
 
         this.startPosition = new Phaser.Math.Vector2(x, y);
 
-        // Get it in the scene
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        scene.addBullet(this);
 
         // Physics
         this.getBody().setSize(4, 4);
         this.getBody().setOffset(0, 0);
 
         this.setVelocity(direction.x * this.SPEED, direction.y * this.SPEED);
+
+        this.sparksManager = scene.add.particles('spark');
+    }
+
+    public onHitEnemy(enemy : Enemy) : void {
+        enemy.destroy();
+        this.destroy();
+    }
+
+    public onHitWall() : void {
+        this.hitWallSound.play();
+        this.destroy();
+
+        this.sparksManager.createEmitter({
+          x: this.x,
+          y: this.y,
+          speed: 150,
+          scale: 0.03,
+          quantity: 10,
+          maxParticles: 20,
+          lifespan: 80,
+
+          blendMode: Phaser.BlendModes.ADD
+        });
     }
 
     preUpdate() : void {

@@ -12,7 +12,9 @@ export class Level1 extends Scene {
     private groundLayer !: Tilemaps.TilemapLayer;
     private wallsLayer !: Tilemaps.TilemapLayer;
     private chests !: Phaser.GameObjects.Sprite[];
-    private enemies !: Enemy[];
+
+    private enemyGroup !: Phaser.GameObjects.Group;
+    private bulletGroup !: Phaser.GameObjects.Group;
     
     constructor() {
         super('level-1-scene');
@@ -25,11 +27,13 @@ export class Level1 extends Scene {
         this.player = new Player(this, 350, 350);
         this.physics.add.collider(this.player, this.wallsLayer);
 
+        this.sound.add('fireAutoRifle');
+        this.sound.add('bulletHitWall');
+
         this.initChests();
-
         this.initCamera();
-
         this.initEnemies();
+        this.initBullets();
     }
 
     update() : void {
@@ -45,25 +49,17 @@ export class Level1 extends Scene {
 
         this.physics.world.setBounds(0, 0, this.wallsLayer.width, this.wallsLayer.height);
 
-        this.showDebugWalls();
+        // this.showDebugWalls();
     }
 
-    spawnBullet(x: number, y: number, direction: Phaser.Math.Vector2) {
-      const bullet = new Bullet(this, x, y, direction, 'projectile_spr', 15)
-      .setScale(0.8)
-      .setName(`bullet_${Date.now()}`);
+    public addEnemy(enemy : Enemy) : void {
+      this.enemyGroup.add(enemy, true);
+      this.physics.add.existing(enemy);
+    }
 
-      this.sound.play('fire');
-
-      this.physics.add.collider(bullet, this.enemies, (bullet, enemy) => {
-          enemy.destroy();
-          bullet.destroy();
-          this.sound.play('death');
-
-          this.enemies = this.enemies.filter(it => it !== enemy);
-      });
-
-      return bullet;
+    public addBullet(bullet : Bullet) : void {
+      this.bulletGroup.add(bullet, true);
+      this.physics.add.existing(bullet);
     }
 
     private showDebugWalls() : void {
@@ -99,21 +95,41 @@ export class Level1 extends Scene {
       this.cameras.main.setZoom(2);
     }
 
+    private initBullets() : void {
+      this.bulletGroup = this.add.group();
+
+      // Bullets collide with enemies
+      this.physics.add.collider(this.bulletGroup, this.enemyGroup, (bullet, enemy) => {
+        (bullet as Bullet).onHitEnemy(enemy as Enemy);
+      });
+
+      // Bullets collide with walls
+      this.physics.add.collider(this.bulletGroup, this.wallsLayer, (bullet) => {
+        (bullet as Bullet).onHitWall();
+      })
+    }
+
     private initEnemies(): void {
+      this.enemyGroup = this.add.group();
+
+      // Spawn initial enemies
       const enemiesPoints = gameObjectsToObjectPoints(
         this.map.filterObjects('Enemies', (obj) => obj.name === 'EnemyPoint'),
       );
     
-      this.enemies = enemiesPoints.map((enemyPoint) =>
-        new Enemy(this, enemyPoint.x, enemyPoint.y, 'tiles_spr', this.player, 503)
-          .setName(enemyPoint.id.toString())
-          .setScale(1.5),
+      enemiesPoints.forEach((enemyPoint) =>
+        this.addEnemy(
+          new Enemy(this, enemyPoint.x, enemyPoint.y, 'tiles_spr', this.player, 503)
+            .setName(enemyPoint.id.toString())
+            .setScale(1.5)
+        )
       );
     
-      this.physics.add.collider(this.enemies, this.wallsLayer);
-      this.physics.add.collider(this.enemies, this.enemies);
-      this.physics.add.collider(this.player, this.enemies, (obj1, obj2) => {
-        (obj1 as Player).getDamage(1);
+      // Enemies collide with walls, other enemies, and the player
+      this.physics.add.collider(this.enemyGroup, this.wallsLayer);
+      this.physics.add.collider(this.enemyGroup, this.enemyGroup);
+      this.physics.add.collider(this.player, this.enemyGroup, (player, enemy) => {
+        (player as Player).getDamage(1);
       });
     }
 }

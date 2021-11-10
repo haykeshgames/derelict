@@ -27,14 +27,16 @@ export class LoadingScene extends Scene {
             frameHeight: 16,
         });
 
-
         this.load.image({key: 'space-tiles-32-32', url: 'tilemaps/tiles/space-tiles-32-32.png'});
         this.load.tilemapTiledJSON('ship', 'tilemaps/json/ship-level-1.json');
 
+        this.load.image('spark', 'particles/yellow.png');
+
         this.load.audio('bgmusic', 'music/bg.mp3');
-        this.load.audio('fire', 'sfx/laser.wav');
         this.load.audio('death', 'sfx/death.wav');
         this.load.audio('pickup', 'sfx/pickup.wav');
+        this.load.audio('fireAutoRifle', 'sfx/laser.wav');
+        this.load.audio('bulletHitWall', 'sfx/hit.wav');
     }
 
     // Called when the scene is created
