@@ -55,9 +55,9 @@ export class Level1 extends Scene {
 
       this.sound.play('fire');
 
-      this.physics.add.collider(bullet, this.enemies, (bullet, enemy) => {
+      this.physics.add.collider(bullet, this.enemies, (bulletObj, enemy) => {
           enemy.destroy();
-          bullet.destroy();
+          bulletObj.destroy();
           this.sound.play('death');
 
           this.enemies = this.enemies.filter(it => it !== enemy);
