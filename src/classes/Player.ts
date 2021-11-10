@@ -53,8 +53,8 @@ export class Player extends Actor {
 
         this.scene.anims.create({
             key: 'attack',
-            frames: this.scene.anims.generateFrameNames('a-king', {prefix: 'attack-', end: 2}),
-            frameRate: 8
+            frames: this.scene.anims.generateFrameNames('player_spr', {start: 32, end: 35}),
+            frameRate: 32
         });
     }
 
@@ -92,6 +92,7 @@ export class Player extends Actor {
         // Pew Pew!
         const {activePointer} = this.scene.input;
         if (activePointer.leftButtonDown() && (Date.now() - this.lastFireTime) >= this.fireRate) {
+            this.anims.play('attack', true);
             const {worldX, worldY} = activePointer,
                 {x, y} = this,
                 startVec = new Phaser.Math.Vector2(x, y),
