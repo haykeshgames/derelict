@@ -22,7 +22,7 @@ export class Level1 extends Scene {
         this.initMap();
 
         // Create the player
-        this.player = new Player(this, 100, 100);
+        this.player = new Player(this, 350, 350);
         this.physics.add.collider(this.player, this.wallsLayer);
 
         this.initChests();
@@ -37,8 +37,8 @@ export class Level1 extends Scene {
     }
 
     initMap() : void {
-        this.map = this.make.tilemap({key: 'dungeon', tileWidth: 16, tileHeight: 16});
-        this.tileSet = this.map.addTilesetImage('dungeon', 'tiles')
+        this.map = this.make.tilemap({key: 'ship', tileWidth: 32, tileHeight: 32});
+        this.tileSet = this.map.addTilesetImage('space-tiles-32-32', 'space-tiles-32-32')
         this.groundLayer = this.map.createLayer('Ground', this.tileSet, 0, 0);
         this.wallsLayer = this.map.createLayer('Walls', this.tileSet, 0, 0);
         this.wallsLayer.setCollisionByProperty({collides: true});
