@@ -119,7 +119,7 @@ export class Level1 extends Scene {
     
       enemiesPoints.forEach((enemyPoint) =>
         this.addEnemy(
-          new Enemy(this, enemyPoint.x, enemyPoint.y, 'tiles_spr', this.player, 503)
+          new Enemy(this, enemyPoint.x, enemyPoint.y, 'enemy_spr', this.player, 60)
             .setName(enemyPoint.id.toString())
             .setScale(1.5)
         )
