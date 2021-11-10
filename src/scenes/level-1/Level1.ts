@@ -49,7 +49,7 @@ export class Level1 extends Scene {
     }
 
     spawnBullet(x: number, y: number, direction: Phaser.Math.Vector2) {
-      const bullet = new Bullet(this, x, y, direction, 'tiles_spr', 469)
+      const bullet = new Bullet(this, x, y, direction, 'projectile_spr', 15)
       .setScale(0.8)
       .setName(`bullet_${Date.now()}`);
 
