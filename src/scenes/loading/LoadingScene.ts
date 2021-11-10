@@ -1,4 +1,5 @@
 import { GameObjects, Scene } from 'phaser';
+import { Player } from 'src/classes/Player';
 
 export class LoadingScene extends Scene {
 
@@ -12,6 +13,10 @@ export class LoadingScene extends Scene {
         // First param is the key for looking up the asset, second param is the relative path
         // from the baseURL we set above.
         this.load.image('king', 'sprites/king.png');
+        this.load.spritesheet('player_spr', 'spritesheets/player-32-32.png', {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
 
         // Atlas for the king animations
         this.load.atlas('a-king', 'spritesheets/a-king.png', 'spritesheets/a-king_atlas.json');

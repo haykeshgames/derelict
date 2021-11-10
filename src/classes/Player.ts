@@ -23,7 +23,7 @@ export class Player extends Actor {
 
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, 'king');
+        super(scene, x, y, 'player_spr');
 
         this.lastFireTime = Date.now();
 
@@ -47,7 +47,7 @@ export class Player extends Actor {
     private initAnimations() : void {
         this.scene.anims.create({
             key: 'run',
-            frames: this.scene.anims.generateFrameNames('a-king', {prefix: 'run-', end: 7}),
+            frames: this.scene.anims.generateFrameNames('player_spr', {start: 24, end: 27}),
             frameRate: 8
         });
 
