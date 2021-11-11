@@ -28,8 +28,10 @@ export class Bullet extends Actor {
         scene.addBullet(this);
 
         // Physics
-        this.getBody().setSize(4, 4);
-        this.getBody().setOffset(0, 0);
+        this.getBody().setSize(6, 6);
+        // size of the sprite is 6x6, centered in a 32x32 image
+        // TODO: make the bullet seem to hit the middle of northern walls rather than the bottom
+        this.getBody().setOffset(13, 13);
 
         this.setVelocity(direction.x * this.SPEED, direction.y * this.SPEED);
 
