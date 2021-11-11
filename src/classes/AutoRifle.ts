@@ -11,7 +11,7 @@ export class AutoRifle extends Weapon {
     private lastFireTime : number = 0;
 
     get fireSound() : Phaser.Sound.BaseSound {
-        return this.scene.sound.get('fireAutoRifle');
+        return this.scene?.sound.get('fireAutoRifle');
     }
 
     update() : boolean {

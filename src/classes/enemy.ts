@@ -10,7 +10,7 @@ export class Enemy extends Actor {
   private destroyOnUpdate = false;
 
   get deathSound() : Phaser.Sound.BaseSound {
-    return this.scene.sound.get('death');
+    return this.scene?.sound.get('death');
   }
 
   constructor(

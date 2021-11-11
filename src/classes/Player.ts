@@ -19,7 +19,6 @@ export class Player extends Actor {
 
     private weapon : Weapon;
 
-
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
 

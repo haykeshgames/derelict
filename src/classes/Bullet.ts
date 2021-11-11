@@ -10,7 +10,7 @@ export class Bullet extends Actor {
     private sparksManager !: Phaser.GameObjects.Particles.ParticleEmitterManager;
 
     get hitWallSound() : Phaser.Sound.BaseSound {
-        return this.scene.sound.get('bulletHitWall');
+        return this.scene?.sound.get('bulletHitWall');
     }
 
     constructor(
