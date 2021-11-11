@@ -76,7 +76,7 @@ export class Level1 extends Scene {
         );
       
         this.chests = chestPoints.map(chestPoint =>
-          this.physics.add.sprite(chestPoint.x, chestPoint.y, 'tiles_spr', 595).setScale(1.5),
+          this.physics.add.sprite(chestPoint.x, chestPoint.y, 'item_spr', 155),
         );
       
         this.chests.forEach(chest => {
