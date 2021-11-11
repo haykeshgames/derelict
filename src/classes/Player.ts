@@ -66,23 +66,22 @@ export class Player extends Actor {
 
         if (this.keyA?.isDown) {
             xDir = -1;
-            this.checkFlip();
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
         if (this.keyS?.isDown) {
-            yDir = 1;
+            yDir = 1; 
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
         if (this.keyD?.isDown) {
             xDir = 1;
-            this.checkFlip();
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
 
         const velocity = new Phaser.Math.Vector2(xDir, yDir).normalize().scale(this.speed);
         this.getBody().setVelocity(velocity.x, velocity.y);
+        this.checkFlip();
 
         if (this.weapon.update()) {
             this.anims.play('attack');
