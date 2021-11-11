@@ -7,9 +7,14 @@ import { gameConfig } from '../../';
 
 export class UIScene extends Scene {
   private score!: Score;
+  
   private chestLootHandler: () => void;
+
   private gameEndPhrase!: Text;
   private gameEndHandler: (status: GameStatus) => void;
+
+  private ammoCount !: Text;
+  private ammoCountHandler : (count: number) => void;
 
   constructor() {
     super('ui-scene');
@@ -47,15 +52,21 @@ export class UIScene extends Scene {
             this.scene.restart();
         });
     };
+
+    this.ammoCountHandler = (count) => {
+      this.ammoCount.setText(`Ammo: ${count}`);
+    }
   }
 
   create(): void {
     this.score = new Score(this, 20, 20, 0);
+    this.ammoCount = new Text(this, 20, 70, 'Ammo: ?');
     this.initListeners();
   }
 
   private initListeners(): void {
     this.game.events.on(EVENTS_NAME.chestLoot, this.chestLootHandler, this);
     this.game.events.once(EVENTS_NAME.gameEnd, this.gameEndHandler, this);
+    this.game.events.on(EVENTS_NAME.ammoCount, this.ammoCountHandler, this);
   }
 }

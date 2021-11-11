@@ -40,6 +40,7 @@ export class LoadingScene extends Scene {
         this.load.audio('pickup', 'sfx/pickup.wav');
         this.load.audio('fireAutoRifle', 'sfx/laser.wav');
         this.load.audio('bulletHitWall', 'sfx/hit.wav');
+        this.load.audio('noAmmo', 'sfx/noammo.wav');
     }
 
     // Called when the scene is created

@@ -19,6 +19,8 @@ export class Player extends Actor {
 
     private weapon : Weapon;
 
+    public ammo = 20;
+
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
 
@@ -39,6 +41,8 @@ export class Player extends Actor {
         this.hpValue = new Text(this.scene, this.x, this.y - this.height, this.hp.toString())
             .setFontSize(12)
             .setOrigin(0.8, 0.5);
+
+        setTimeout(() => this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo), 5);
     }
 
     private initAnimations() : void {
@@ -98,5 +102,15 @@ export class Player extends Actor {
         if (this.hp <= 0) {
             this.scene.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.LOSE);
         }
+    }
+
+    public useAmmo(count: number) {
+        this.ammo = Math.max(0, this.ammo - count);
+        this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
+    }
+
+    public addAmmo(count: number) {
+        this.ammo += count;
+        this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
     }
 }

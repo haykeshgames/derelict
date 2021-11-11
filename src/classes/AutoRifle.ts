@@ -1,3 +1,4 @@
+import { EVENTS_NAME } from '../consts';
 import { Level1 } from '../scenes';
 import { Bullet } from './Bullet';
 import { Weapon } from './Weapon';
@@ -12,6 +13,10 @@ export class AutoRifle extends Weapon {
 
     get fireSound() : Phaser.Sound.BaseSound {
         return this.scene?.sound.get('fireAutoRifle');
+    }
+
+    get noAmmoSound() : Phaser.Sound.BaseSound {
+        return this.scene?.sound.get('noAmmo');
     }
 
     update() : boolean {
@@ -31,14 +36,21 @@ export class AutoRifle extends Weapon {
             }
 
             if ((Date.now() - this.lastFireTime) >= this.fireRate) {
-                // Fire a bullet!
-                this.fireSound.play();
-
-                // Spawn a bullet!
-                new Bullet(this.scene as Level1, x, y, dir, 'projectile_spr', 15)
-                    .setScale(0.8)
-                    .setName(`bullet_${Date.now()}`);
-
+                if (this.player.ammo > 0) {
+                    // Fire a bullet!
+                    this.fireSound?.play();
+    
+                    // Spawn a bullet!
+                    new Bullet(this.scene as Level1, x, y, dir, 'projectile_spr', 15)
+                        .setScale(0.8)
+                        .setName(`bullet_${Date.now()}`);
+    
+                    this.player.useAmmo(1);
+                } else {
+                    // No ammo!
+                    this.noAmmoSound?.play();                    
+                }
+    
                 this.lastFireTime = Date.now();
 
                 return true;

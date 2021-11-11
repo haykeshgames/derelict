@@ -30,6 +30,7 @@ export class Level1 extends Scene {
         this.sound.add('fireAutoRifle');
         this.sound.add('bulletHitWall');
         this.sound.add('death');
+        this.sound.add('noAmmo');
 
         this.initChests();
         this.initCamera();
@@ -82,7 +83,8 @@ export class Level1 extends Scene {
       
         this.chests.forEach(chest => {
           this.physics.add.overlap(this.player, chest, (obj1, obj2) => {
-            this.game.events.emit(EVENTS_NAME.chestLoot);
+            this.player.addAmmo(20);
+
             obj2.destroy();
             this.cameras.main.flash();
             this.sound.play('pickup');
