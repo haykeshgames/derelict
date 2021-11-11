@@ -5,17 +5,22 @@ import { Text } from './text';
 import { EVENTS_NAME, GameStatus } from '../consts';
 import { AutoRifle } from './AutoRifle';
 import { Weapon } from './Weapon';
+import { Pistol } from './Pistol';
 
 export class Player extends Actor {
     private keyW : Phaser.Input.Keyboard.Key;
     private keyA : Phaser.Input.Keyboard.Key;
     private keyS : Phaser.Input.Keyboard.Key;
     private keyD : Phaser.Input.Keyboard.Key;
+    private keyTab : Phaser.Input.Keyboard.Key;
 
     // How fast we move
     private speed = 250;
 
     private hpValue: Text;
+
+    private pistol : Pistol;
+    private autoRifle : AutoRifle;
 
     private weapon : Weapon;
 
@@ -24,13 +29,18 @@ export class Player extends Actor {
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
 
-        this.weapon = new AutoRifle(scene, this);
+        this.pistol = new Pistol(scene, this);
+        this.autoRifle = new AutoRifle(scene, this);
+        this.weapon = this.autoRifle;
 
         // Keys
         this.keyW = this.scene.input.keyboard.addKey('W');
         this.keyA = this.scene.input.keyboard.addKey('A');
         this.keyS = this.scene.input.keyboard.addKey('S');
         this.keyD = this.scene.input.keyboard.addKey('D');
+        this.keyTab = this.scene.input.keyboard.addKey('TAB', true, true);
+
+        this.keyTab.on('down', () => this.swapWeapons());
 
         // Physics
         this.getBody().setSize(12, 16);
@@ -42,7 +52,16 @@ export class Player extends Actor {
             .setFontSize(12)
             .setOrigin(0.8, 0.5);
 
-        setTimeout(() => this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo), 5);
+        setTimeout(() => {
+            this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
+            this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
+        }, 5);
+    }
+
+    private swapWeapons() {
+        this.weapon = this.weapon === this.autoRifle ? this.pistol : this.autoRifle;
+        this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
+        this.scene.sound.get('weaponSwap').play();
     }
 
     private initAnimations() : void {
@@ -60,7 +79,7 @@ export class Player extends Actor {
     }
 
     update() : void {
-        this.getBody().setVelocity(0);
+        this.getBody().setVelocity(0);  
 
         let xDir = 0, yDir = 0;
         if (this.keyW?.isDown) {

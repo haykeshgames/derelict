@@ -4,6 +4,7 @@ import { Score, ScoreOperations } from '../../classes/score';
 import { EVENTS_NAME, GameStatus } from '../../consts';
 import { Text } from '../../classes/text';
 import { gameConfig } from '../..';
+import { Weapon } from '../../classes/Weapon';
 
 export class HUDScene extends Scene {
   private score!: Score;
@@ -15,6 +16,9 @@ export class HUDScene extends Scene {
 
   private ammoCount !: Text;
   private ammoCountHandler : (count: number) => void;
+
+  private curWeapon !: Text;
+  private weaponSwapHandler : (weapon : Weapon) => void;
 
   constructor() {
     super('ui-scene');
@@ -56,11 +60,16 @@ export class HUDScene extends Scene {
     this.ammoCountHandler = (count) => {
       this.ammoCount.setText(`Ammo: ${count}`);
     }
+
+    this.weaponSwapHandler = (weapon : Weapon) => {
+      this.curWeapon.setText(weapon.name);
+    }
   }
 
   create(): void {
     this.score = new Score(this, 20, 20, 0);
-    this.ammoCount = new Text(this, 20, 70, 'Ammo: ?');
+    this.curWeapon = new Text(this, 20, 100, '???');
+    this.ammoCount = new Text(this, 20, 180, 'Ammo: ???');
     this.initListeners();
   }
 
@@ -68,5 +77,6 @@ export class HUDScene extends Scene {
     this.game.events.on(EVENTS_NAME.chestLoot, this.chestLootHandler, this);
     this.game.events.once(EVENTS_NAME.gameEnd, this.gameEndHandler, this);
     this.game.events.on(EVENTS_NAME.ammoCount, this.ammoCountHandler, this);
+    this.game.events.on(EVENTS_NAME.weaponSwap, this.weaponSwapHandler, this);
   }
 }
