@@ -3,9 +3,9 @@ import { Scene } from 'phaser';
 import { Score, ScoreOperations } from '../../classes/score';
 import { EVENTS_NAME, GameStatus } from '../../consts';
 import { Text } from '../../classes/text';
-import { gameConfig } from '../../';
+import { gameConfig } from '../..';
 
-export class UIScene extends Scene {
+export class HUDScene extends Scene {
   private score!: Score;
   
   private chestLootHandler: () => void;
