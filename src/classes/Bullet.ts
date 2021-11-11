@@ -44,7 +44,7 @@ export class Bullet extends Actor {
     }
 
     public onHitWall() : void {
-        this.hitWallSound.play();
+        this.hitWallSound?.play();
         this.destroy();
 
         this.sparksManager.createEmitter({

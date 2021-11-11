@@ -38,10 +38,10 @@ export class Actor extends Physics.Arcade.Sprite {
     }
 
     protected checkFlip() : void {
-        // Flip the texture when moving left
+        // Flip the texture when moving leftd
         if (this.body.velocity.x < 0) {
             this.flipX = true;
-        } else {
+        } else if (this.body.velocity.x > 0) {
             this.flipX = false;
         }
     }

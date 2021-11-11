@@ -16,23 +16,33 @@ export class AutoRifle extends Weapon {
 
     update() : boolean {
         const {activePointer} = this.scene.input;
-        if (activePointer.leftButtonDown() && (Date.now() - this.lastFireTime) >= this.fireRate) {
+        if (activePointer.leftButtonDown()) {
             const {worldX, worldY} = activePointer,
                 {x, y} = this.player,
                 startVec = new Phaser.Math.Vector2(x, y),
                 targetVec = new Phaser.Math.Vector2(worldX, worldY),
                 dir = targetVec.subtract(startVec).normalize();
 
-            // Pew Pew!
-            this.fireSound.play();
+            // Make sure the player is facing the direction they are shooting
+            if (dir.x > 0) {
+                this.player.setFlipX(false);
+            } else if (dir.x < 0) {
+                this.player.setFlipX(true);
+            }
 
-            // Spawn a bullet!
-            new Bullet(this.scene as Level1, x, y, dir, 'projectile_spr', 15)
-                .setScale(0.8)
-                .setName(`bullet_${Date.now()}`);
+            if ((Date.now() - this.lastFireTime) >= this.fireRate) {
+                // Fire a bullet!
+                this.fireSound.play();
 
-            this.lastFireTime = Date.now();
-            return true;
+                // Spawn a bullet!
+                new Bullet(this.scene as Level1, x, y, dir, 'projectile_spr', 15)
+                    .setScale(0.8)
+                    .setName(`bullet_${Date.now()}`);
+
+                this.lastFireTime = Date.now();
+
+                return true;
+            }
         }
 
         return false;
