@@ -121,7 +121,6 @@ export class Level1 extends Scene {
         this.addEnemy(
           new Enemy(this, enemyPoint.x, enemyPoint.y, 'enemy_spr', this.player, 60)
             .setName(enemyPoint.id.toString())
-            .setScale(1.5)
         )
       );
     

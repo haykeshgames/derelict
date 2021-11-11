@@ -25,11 +25,15 @@ export class Enemy extends Actor {
     // Add to enemies group
 
     // PHYSICS MODEL
-    this.getBody().setSize(16, 16);
+    this.getBody().setSize(32, 32);
     this.getBody().setOffset(0, 0);
+
+    this.initAnimations();
   }
 
-  preUpdate(): void {
+  preUpdate(time: number, delta: number): void {
+    super.preUpdate(time, delta);
+
     if (
       Phaser.Math.Distance.BetweenPoints(
         { x: this.x, y: this.y },
@@ -38,12 +42,30 @@ export class Enemy extends Actor {
     ) {
       this.getBody().setVelocityX(this.target.x - this.x);
       this.getBody().setVelocityY(this.target.y - this.y);
+
+      this.checkFlip();
+      if (!this.anims.isPlaying) this.anims.play('enemy_run', true);
     } else {
       this.getBody().setVelocity(0);
+      if (!this.anims.isPlaying) this.anims.play('enemy_idle', true);
     }
   }
 
   public setTarget(target: Player): void {
     this.target = target;
   }
+
+  private initAnimations() : void {
+    this.scene.anims.create({
+        key: 'enemy_idle',
+        frames: this.scene.anims.generateFrameNames('enemy_spr', {start: 60, end: 63}),
+        frameRate: 8
+    });
+
+    this.scene.anims.create({
+        key: 'enemy_run',
+        frames: this.scene.anims.generateFrameNames('enemy_spr', {start: 80, end: 83}),
+        frameRate: 8
+    });
+}
 }
