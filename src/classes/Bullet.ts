@@ -23,6 +23,8 @@ export class Bullet extends Actor {
     ) {
         super(scene, x, y, texture, frame);
 
+        this.setRotation(direction.angle());
+
         this.startPosition = new Phaser.Math.Vector2(x, y);
 
         scene.addBullet(this);
