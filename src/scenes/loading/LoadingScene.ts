@@ -30,13 +30,6 @@ export class LoadingScene extends Scene {
             frameHeight: 32,
         });
 
-        this.load.image({key: 'tiles', url: 'tilemaps/tiles/dungeon-16-16.png'});
-        this.load.tilemapTiledJSON('dungeon', 'tilemaps/json/level1.json');
-        this.load.spritesheet('tiles_spr', 'tilemaps/tiles/dungeon-16-16.png', {
-            frameWidth: 16,
-            frameHeight: 16,
-        });
-
         this.load.image({key: 'space-tiles-32-32', url: 'tilemaps/tiles/space-tiles-32-32.png'});
         this.load.tilemapTiledJSON('ship', 'tilemaps/json/ship-level-1.json');
 
