@@ -29,6 +29,7 @@ export class Level1 extends Scene {
 
         this.sound.add('fireAutoRifle');
         this.sound.add('bulletHitWall');
+        this.sound.add('death');
 
         this.initChests();
         this.initCamera();

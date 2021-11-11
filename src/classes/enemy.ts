@@ -9,6 +9,10 @@ export class Enemy extends Actor {
   private AGRESSOR_RADIUS = 100;
   private destroyOnUpdate = false;
 
+  get deathSound() : Phaser.Sound.BaseSound {
+    return this.scene.sound.get('death');
+  }
+
   constructor(
     scene: Level1,
     x: number,
@@ -59,7 +63,12 @@ export class Enemy extends Actor {
   }
 
   public onKill(): void {
+      if (this.destroyOnUpdate) {
+          return;
+      }
+      
       this.anims.play('enemy_death');
+      this.deathSound.play({delay: 0.5});
       this.destroyOnUpdate = true;
   }
 
