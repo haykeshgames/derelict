@@ -39,7 +39,7 @@ export class Bullet extends Actor {
     }
 
     public onHitEnemy(enemy : Enemy) : void {
-        enemy.destroy();
+        enemy.onKill();
         this.destroy();
     }
 

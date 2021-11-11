@@ -7,6 +7,7 @@ import { Player } from './Player';
 export class Enemy extends Actor {
   private target: Player;
   private AGRESSOR_RADIUS = 100;
+  private destroyOnUpdate = false;
 
   constructor(
     scene: Level1,
@@ -34,6 +35,12 @@ export class Enemy extends Actor {
   preUpdate(time: number, delta: number): void {
     super.preUpdate(time, delta);
 
+    // FIXME this is definitely not the best way to do this, but it works
+    if(this.destroyOnUpdate && !this.anims.isPlaying) {
+        this.destroy();
+        return;
+    }
+
     if (
       Phaser.Math.Distance.BetweenPoints(
         { x: this.x, y: this.y },
@@ -49,6 +56,11 @@ export class Enemy extends Actor {
       this.getBody().setVelocity(0);
       if (!this.anims.isPlaying) this.anims.play('enemy_idle', true);
     }
+  }
+
+  public onKill(): void {
+      this.anims.play('enemy_death');
+      this.destroyOnUpdate = true;
   }
 
   public setTarget(target: Player): void {
@@ -67,5 +79,11 @@ export class Enemy extends Actor {
         frames: this.scene.anims.generateFrameNames('enemy_spr', {start: 80, end: 83}),
         frameRate: 8
     });
-}
+
+    this.scene.anims.create({
+        key: 'enemy_death',
+        frames: this.scene.anims.generateFrameNames('enemy_spr', {start: 100, end: 107}),
+        frameRate: 8
+    });
+  }
 }
