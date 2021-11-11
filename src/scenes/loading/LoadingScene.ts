@@ -31,6 +31,7 @@ export class LoadingScene extends Scene {
         });
 
         this.load.image({key: 'space-tiles-32-32', url: 'tilemaps/tiles/space-tiles-32-32.png'});
+        this.load.image({key: 'items-tiles-32-32', url: 'tilemaps/tiles/items-tiles-32-32.png'});
         this.load.tilemapTiledJSON('ship', 'tilemaps/json/ship-level-1.json');
 
         this.load.image('spark', 'particles/yellow.png');

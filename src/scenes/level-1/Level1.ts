@@ -9,8 +9,11 @@ export class Level1 extends Scene {
     private player !: Player;
     private map !: Tilemaps.Tilemap;
     private tileSet !: Tilemaps.Tileset;
+    private itemTileSet !: Tilemaps.Tileset;
     private groundLayer !: Tilemaps.TilemapLayer;
+    private groundDecorationLayer !: Tilemaps.TilemapLayer;
     private wallsLayer !: Tilemaps.TilemapLayer;
+    private doorsLayer !: Tilemaps.TilemapLayer;
     private chests !: Phaser.GameObjects.Sprite[];
 
     private enemyGroup !: Phaser.GameObjects.Group;
@@ -46,10 +49,13 @@ export class Level1 extends Scene {
 
     initMap() : void {
         this.map = this.make.tilemap({key: 'ship', tileWidth: 32, tileHeight: 32});
-        this.tileSet = this.map.addTilesetImage('space-tiles-32-32', 'space-tiles-32-32')
+        this.tileSet = this.map.addTilesetImage('space-tiles-32-32', 'space-tiles-32-32');
+        this.itemTileSet = this.map.addTilesetImage('items-tiles-32-32', 'items-tiles-32-32');
         this.groundLayer = this.map.createLayer('Ground', this.tileSet, 0, 0);
+        this.groundDecorationLayer = this.map.createLayer('GroundDecoration', this.tileSet, 0, 0);
         this.wallsLayer = this.map.createLayer('Walls', this.tileSet, 0, 0);
         this.wallsLayer.setCollisionByProperty({collides: true});
+        this.doorsLayer = this.map.createLayer('Doors', [this.tileSet, this.itemTileSet], 0, 0);
 
         this.physics.world.setBounds(0, 0, this.wallsLayer.width, this.wallsLayer.height);
 
