@@ -50,6 +50,24 @@ export class DungeonScene extends Scene {
     
     initBullets() {
         this.bulletGroup = this.add.group();
+        
+        // Bullets collide with enemies
+        this.physics.add.collider(
+            this.bulletGroup,
+            this.enemyGroup,
+            (bullet, enemy) => {
+                (bullet as Bullet).onHitEnemy(enemy as Enemy);
+            }
+        );
+        
+        // Bullets collide with walls
+        this.physics.add.collider(
+            this.bulletGroup,
+            this.wallLayer,
+            (bullet) => {
+                (bullet as Bullet).onHitWall();
+            }
+        );
     }
     
     initMap() {
