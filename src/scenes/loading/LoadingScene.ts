@@ -24,7 +24,7 @@ export class LoadingScene extends Scene {
             frameWidth: 32,
             frameHeight: 32,
         });
-
+        
         this.load.spritesheet('item_spr', 'spritesheets/items-32-32.png', {
             frameWidth: 32,
             frameHeight: 32,
@@ -33,7 +33,7 @@ export class LoadingScene extends Scene {
         this.load.image({key: 'space-tiles-32-32', url: 'tilemaps/tiles/space-tiles-32-32.png'});
         this.load.image({key: 'items-tiles-32-32', url: 'tilemaps/tiles/items-tiles-32-32.png'});
         this.load.tilemapTiledJSON('ship', 'tilemaps/json/ship-level-1.json');
-
+        
         this.load.image('spark', 'particles/yellow.png');
 
         this.load.audio('bgmusic', 'music/bg.mp3');
@@ -48,7 +48,14 @@ export class LoadingScene extends Scene {
 
     // Called when the scene is created
     create(): void {
-        this.scene.start('level-1-scene');
+        this.sound.add('fireAutoRifle');
+        this.sound.add('bulletHitWall');
+        this.sound.add('death');
+        this.sound.add('noAmmo');
+        this.sound.add('pistolFire');
+        this.sound.add('weaponSwap');
+        
+        this.scene.start('dungeon-scene');
         this.scene.start('ui-scene');
 
         // Play some bg music

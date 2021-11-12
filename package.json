@@ -7,6 +7,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@mikewesthad/dungeon": "^2.0.1",
     "phaser": "^3.55.2"
   },
   "devDependencies": {
@@ -36,7 +37,7 @@
     "webpack-dev-server": "^4.4.0"
   },
   "scripts": {
-	  "dev": "yarn install && cross-env NODE_ENV=development webpack serve",
-	  "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "dev": "yarn install && cross-env NODE_ENV=development webpack serve",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   }
 }
