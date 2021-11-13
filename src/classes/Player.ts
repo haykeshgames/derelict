@@ -86,7 +86,7 @@ export class Player extends Actor {
             yDir = -1;
             if (!this.anims.isPlaying) this.anims.play('run', true)
         }
-
+        
         if (this.keyA?.isDown) {
             xDir = -1;
             if (!this.anims.isPlaying) this.anims.play('run', true)
