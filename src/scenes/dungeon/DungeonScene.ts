@@ -38,6 +38,7 @@ export class DungeonScene extends Scene {
         this.initPlayer();
         this.initEnemies();
         this.initBullets();
+        this.initCamera();
     }
     
     update(): void {
@@ -193,5 +194,14 @@ export class DungeonScene extends Scene {
             tileColor: null,
             collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255)
         });
+    }
+
+    private initCamera(): void {
+        this.cameras.main.setSize(
+            this.game.scale.width,
+            this.game.scale.height
+        );
+        this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
+        this.cameras.main.setZoom(2);
     }
 }
