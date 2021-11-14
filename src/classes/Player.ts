@@ -16,7 +16,7 @@ export class Player extends Actor {
 
     // How fast we move
     private speed = 250;
-
+    
     private hpValue: Text;
 
     private pistol : Pistol;
@@ -24,7 +24,7 @@ export class Player extends Actor {
 
     private weapon : Weapon;
 
-    public ammo = 20;
+    public ammo = 200;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
@@ -77,10 +77,10 @@ export class Player extends Actor {
             frameRate: 32
         });
     }
-
+    
     update() : void {
         this.getBody().setVelocity(0);  
-
+        
         let xDir = 0, yDir = 0;
         if (this.keyW?.isDown) {
             yDir = -1;

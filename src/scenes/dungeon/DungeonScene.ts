@@ -8,21 +8,22 @@ import { Player } from '../../classes/Player';
 export class DungeonScene extends Scene {
     private dungeon!: Dungeon;
     private map!: Tilemaps.Tilemap;
-    private groundLayer!: Tilemaps.TilemapLayer;
+    public groundLayer!: Tilemaps.TilemapLayer;
     private wallLayer!: Tilemaps.TilemapLayer;
     private shadowLayer!: Tilemaps.TilemapLayer;
 
-    private player!: Player;
+    public player!: Player;
 
     private enemyGroup!: Phaser.GameObjects.Group;
     private bulletGroup!: Phaser.GameObjects.Group;
     
     private dungeonRooms: Array<DungeonRoom> = [];
+    private activeDungeonRoom!: DungeonRoom | null | undefined;
     
     constructor() {
         super('dungeon-scene');
     }
-
+    
     public addEnemy(enemy: Enemy): void {
         this.enemyGroup.add(enemy, true);
         this.physics.add.existing(enemy);
@@ -47,9 +48,14 @@ export class DungeonScene extends Scene {
         // Figure out which room the player is in
         const playerX = this.groundLayer.worldToTileX(this.player.x),
             playerY = this.groundLayer.worldToTileY(this.player.y),
-            activeRoom = this.dungeon.getRoomAt(playerX, playerY);
+            activeRoom = this.dungeon.getRoomAt(playerX, playerY),
+            activeDungeonRoom = this.dungeonRooms.find(it => it.room === activeRoom);
         
-        this.dungeonRooms.forEach(it => it.update(activeRoom));
+        if (this.activeDungeonRoom !== activeDungeonRoom) {
+            this.activeDungeonRoom?.setActive(false);
+            activeDungeonRoom?.setActive(true);
+            this.activeDungeonRoom = activeDungeonRoom;
+        }
     }
     
     initPlayer() {
@@ -117,10 +123,16 @@ export class DungeonScene extends Scene {
             wallLayer = map.createBlankLayer('Walls', tileset),
             stuffLayer = map.createBlankLayer('Stuff', tileset),
             shadowLayer = map.createBlankLayer('Shadow', tileset).fill(107);
+            
+        this.map = map;
+        this.wallLayer = wallLayer;
+        // this.stuffLayer = stuffLayer;
+        this.shadowLayer = shadowLayer;
+        this.groundLayer = groundLayer;
         
         this.dungeon.rooms.forEach((room) => {
             const { x, y, width, height, left, right, top, bottom } = room,
-                dungeonRoom = new DungeonRoom(room, this, this.player, shadowLayer);
+                dungeonRoom = new DungeonRoom(room, this, this.player, stuffLayer, shadowLayer);
                 
             this.dungeonRooms.push(dungeonRoom);
             
@@ -142,7 +154,7 @@ export class DungeonScene extends Scene {
             wallLayer.putTileAt(335, right, top); // top right corner
             wallLayer.putTileAt(39, right, bottom); // bottom left corner
             wallLayer.putTileAt(45, left, bottom); // bottom right corner
-
+            
             // Non-corner walls
             wallLayer.fill(5, left + 1, top, width - 2, 1); // top
             wallLayer.fill(375, left + 1, bottom, width - 2, 1); // bottom
@@ -176,16 +188,11 @@ export class DungeonScene extends Scene {
                 }
             });
         });
-
+        
         // Collide with everything except empty tiles or floor tiles
         wallLayer.setCollisionByExclusion([71, -1]);
-
-        this.map = map;
-        this.wallLayer = wallLayer;
-        this.shadowLayer = shadowLayer;
-        this.groundLayer = groundLayer;
-
-        // this.showDebugWalls();
+        
+        //this.showDebugWalls();
     }
 
     private showDebugWalls(): void {

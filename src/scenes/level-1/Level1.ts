@@ -150,7 +150,7 @@ export class Level1 extends Scene {
 
     private initEnemies(): void {
         this.enemyGroup = this.add.group();
-
+        
         // Spawn initial enemies
         const enemiesPoints = gameObjectsToObjectPoints(
             this.map.filterObjects(
@@ -158,20 +158,7 @@ export class Level1 extends Scene {
                 (obj) => obj.name === 'EnemyPoint'
             )
         );
-
-        enemiesPoints.forEach((enemyPoint) =>
-            this.addEnemy(
-                new Enemy(
-                    this,
-                    enemyPoint.x,
-                    enemyPoint.y,
-                    'enemy_spr',
-                    this.player,
-                    60
-                ).setName(enemyPoint.id.toString())
-            )
-        );
-
+        
         // Enemies collide with walls, other enemies, and the player
         this.physics.add.collider(this.enemyGroup, this.wallsLayer);
         this.physics.add.collider(this.enemyGroup, this.enemyGroup);
