@@ -105,7 +105,7 @@ export class DungeonScene extends Scene {
             width: this.dungeon.width,
             height: this.dungeon.height
         });
-
+        
         const tileset = map.addTilesetImage(
             'space-tiles-32-32',
             'space-tiles-32-32',
@@ -116,7 +116,7 @@ export class DungeonScene extends Scene {
         const groundLayer = map.createBlankLayer('Ground', tileset),
             wallLayer = map.createBlankLayer('Walls', tileset),
             stuffLayer = map.createBlankLayer('Stuff', tileset),
-            shadowLayer = map.createBlankLayer('Shadow', tileset).fill(71);
+            shadowLayer = map.createBlankLayer('Shadow', tileset).fill(107);
         
         this.dungeon.rooms.forEach((room) => {
             const { x, y, width, height, left, right, top, bottom } = room,
