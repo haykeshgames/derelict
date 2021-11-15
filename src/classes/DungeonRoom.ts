@@ -6,6 +6,7 @@ import { Player } from './Player';
 import { Spawner } from './Spawner';
 
 export class DungeonRoom extends Phaser.GameObjects.GameObject {
+    private groundLayer: Tilemaps.TilemapLayer;
     private stuffLayer: Tilemaps.TilemapLayer;
     private shadowLayer: Tilemaps.TilemapLayer;
     private player: Player;
@@ -30,15 +31,17 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         room: Room,
         scene: DungeonScene,
         player: Player,
+        groundLayer: Tilemaps.TilemapLayer,
         stuffLayer: Tilemaps.TilemapLayer,
         shadowLayer: Tilemaps.TilemapLayer
     ) {
         super(scene, 'dungeonRoom');
-
+        
         scene.add.existing(this);
         
         this.room = room;
         this.player = player;
+        this.groundLayer = groundLayer;
         this.stuffLayer = stuffLayer;
         this.shadowLayer = shadowLayer;
         
@@ -46,10 +49,10 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         const numSpawners = Phaser.Math.Between(1, 3);
         for (let i = 0; i < numSpawners; i++) {
             const { x, y } = this.getRandomTile();
-            this.stuffLayer.putTileAt(73, x, y);
+            this.groundLayer.putTileAt(73, x, y);
             
-            const worldX = this.stuffLayer.tileToWorldX(x),
-                worldY = this.stuffLayer.tileToWorldY(y);
+            const worldX = this.groundLayer.tileToWorldX(x),
+                worldY = this.groundLayer.tileToWorldY(y);
             
             this.spawners.push(new Spawner(scene, worldX, worldY));
         }

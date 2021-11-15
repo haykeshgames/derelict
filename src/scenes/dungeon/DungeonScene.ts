@@ -29,7 +29,7 @@ export class DungeonScene extends Scene {
         this.enemyGroup.add(enemy, true);
         this.physics.add.existing(enemy);
     }
-    
+
     public addBullet(bullet: Bullet): void {
         this.bulletGroup.add(bullet, true);
         this.physics.add.existing(bullet);
@@ -136,7 +136,7 @@ export class DungeonScene extends Scene {
             wallLayer = map.createBlankLayer('Walls', tileset),
             stuffLayer = map.createBlankLayer('Stuff', tileset),
             shadowLayer = map.createBlankLayer('Shadow', tileset).fill(107);
-        
+
         // Shadows cover everything
         shadowLayer.setDepth(999);
 
@@ -145,19 +145,10 @@ export class DungeonScene extends Scene {
         this.stuffLayer = stuffLayer;
         this.shadowLayer = shadowLayer;
         this.groundLayer = groundLayer;
-        
-        this.dungeon.rooms.forEach((room) => {
-            const { x, y, width, height, left, right, top, bottom } = room,
-                dungeonRoom = new DungeonRoom(
-                    room,
-                    this,
-                    this.player,
-                    stuffLayer,
-                    shadowLayer
-                );
 
-            this.dungeonRooms.push(dungeonRoom);
-            
+        this.dungeon.rooms.forEach((room) => {
+            const { x, y, width, height, left, right, top, bottom } = room;
+
             // Generate floor tiles in the room
             // Mostly the primary empty floor time, somtimes an alternate for detail
             groundLayer.weightedRandomize(
@@ -209,6 +200,18 @@ export class DungeonScene extends Scene {
                     wallLayer.putTileAt(300, x + doorX, y + doorY); // top wall connector
                 }
             });
+            
+            // Once we've setup the ground and walls, init the room to spawn other stuff in as well
+            this.dungeonRooms.push(
+                new DungeonRoom(
+                    room,
+                    this,
+                    this.player,
+                    groundLayer,
+                    stuffLayer,
+                    shadowLayer
+                )
+            );
         });
 
         // Collide with everything except empty tiles or floor tiles
