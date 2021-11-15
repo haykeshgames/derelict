@@ -14,6 +14,9 @@ export class HUDScene extends Scene {
   private gameEndPhrase!: Text;
   private gameEndHandler: (status: GameStatus) => void;
 
+  private hpValue !: Text;
+  private hpValueHandler : (count: number) => void;
+
   private ammoCount !: Text;
   private ammoCountHandler : (count: number) => void;
 
@@ -64,12 +67,17 @@ export class HUDScene extends Scene {
     this.weaponSwapHandler = (weapon : Weapon) => {
       this.curWeapon.setText(weapon.name);
     }
+
+    this.hpValueHandler = (hpValue) => {
+      this.hpValue.setText(`Health: ${hpValue}`);
+    }
   }
 
   create(): void {
     this.score = new Score(this, 20, 20, 0);
-    this.curWeapon = new Text(this, 20, 100, '???');
-    this.ammoCount = new Text(this, 20, 180, 'Ammo: ???');
+    this.hpValue = new Text (this, 20, 100, 'Health: ???');
+    this.curWeapon = new Text(this, 20, 180, '???');
+    this.ammoCount = new Text(this, 20, 260, 'Ammo: ???');
     this.initListeners();
   }
 
@@ -78,5 +86,6 @@ export class HUDScene extends Scene {
     this.game.events.once(EVENTS_NAME.gameEnd, this.gameEndHandler, this);
     this.game.events.on(EVENTS_NAME.ammoCount, this.ammoCountHandler, this);
     this.game.events.on(EVENTS_NAME.weaponSwap, this.weaponSwapHandler, this);
+    this.game.events.on(EVENTS_NAME.playerHp, this.hpValueHandler, this);
   }
 }

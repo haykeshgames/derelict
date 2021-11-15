@@ -16,8 +16,6 @@ export class Player extends Actor {
 
     // How fast we move
     private speed = 250;
-    
-    private hpValue: Text;
 
     private pistol : Pistol;
     private autoRifle : AutoRifle;
@@ -48,13 +46,10 @@ export class Player extends Actor {
 
         this.initAnimations();
 
-        this.hpValue = new Text(this.scene, this.x, this.y - this.height, this.hp.toString())
-            .setFontSize(12)
-            .setOrigin(0.8, 0.5);
-
         setTimeout(() => {
             this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
             this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
+            this.scene.game.events.emit(EVENTS_NAME.playerHp, this.hp);
         }, 5);
     }
 
@@ -109,14 +104,12 @@ export class Player extends Actor {
         if (this.weapon.update()) {
             this.anims.play('attack');
         }
-
-        this.hpValue.setPosition(this.x, this.y - this.height * 0.4);
-        this.hpValue.setOrigin(0.8, 0.5);
     }
 
     public getDamage(value?: number): void {
         super.getDamage(value);
-        this.hpValue.setText(this.hp.toString());
+        
+        this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.hp);
 
         if (this.hp <= 0) {
             this.scene.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.LOSE);
