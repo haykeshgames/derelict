@@ -8,7 +8,7 @@ export class Actor extends Physics.Arcade.Sprite {
 
         // Add the actor to the scene
         scene.add.existing(this);
-
+        
         // Enable physics on the actor
         scene.physics.add.existing(this);
 

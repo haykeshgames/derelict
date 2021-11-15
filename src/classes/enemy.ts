@@ -27,7 +27,7 @@ export class Enemy extends Actor {
         scene.addEnemy(this);
         
         // Add to enemies group
-
+        
         // PHYSICS MODEL
         this.getBody().setSize(32, 32);
         this.getBody().setOffset(0, 0);
@@ -71,7 +71,7 @@ export class Enemy extends Actor {
         this.deathSound.play({ delay: 0.5 });
         this.destroyOnUpdate = true;
     }
-
+    
     public setTarget(target: Player): void {
         this.target = target;
     }

@@ -1,4 +1,4 @@
-import Dungeon, { TILES } from '@mikewesthad/dungeon';
+import Dungeon from '@mikewesthad/dungeon';
 import { Scene, Tilemaps } from 'phaser';
 import { Bullet } from '../../classes/Bullet';
 import { DungeonRoom } from '../../classes/DungeonRoom';
@@ -10,25 +10,26 @@ export class DungeonScene extends Scene {
     private map!: Tilemaps.Tilemap;
     public groundLayer!: Tilemaps.TilemapLayer;
     private wallLayer!: Tilemaps.TilemapLayer;
+    private stuffLayer!: Tilemaps.TilemapLayer;
     private shadowLayer!: Tilemaps.TilemapLayer;
 
     public player!: Player;
 
     private enemyGroup!: Phaser.GameObjects.Group;
     private bulletGroup!: Phaser.GameObjects.Group;
-    
+
     private dungeonRooms: Array<DungeonRoom> = [];
     private activeDungeonRoom!: DungeonRoom | null | undefined;
-    
+
     constructor() {
         super('dungeon-scene');
     }
-    
+
     public addEnemy(enemy: Enemy): void {
         this.enemyGroup.add(enemy, true);
         this.physics.add.existing(enemy);
     }
-
+    
     public addBullet(bullet: Bullet): void {
         this.bulletGroup.add(bullet, true);
         this.physics.add.existing(bullet);
@@ -41,23 +42,25 @@ export class DungeonScene extends Scene {
         this.initBullets();
         this.initCamera();
     }
-    
+
     update(): void {
         this.player.update();
-        
+
         // Figure out which room the player is in
         const playerX = this.groundLayer.worldToTileX(this.player.x),
             playerY = this.groundLayer.worldToTileY(this.player.y),
             activeRoom = this.dungeon.getRoomAt(playerX, playerY),
-            activeDungeonRoom = this.dungeonRooms.find(it => it.room === activeRoom);
-        
+            activeDungeonRoom = this.dungeonRooms.find(
+                (it) => it.room === activeRoom
+            );
+
         if (this.activeDungeonRoom !== activeDungeonRoom) {
             this.activeDungeonRoom?.setActive(false);
             activeDungeonRoom?.setActive(true);
             this.activeDungeonRoom = activeDungeonRoom;
         }
     }
-    
+
     initPlayer() {
         this.player = new Player(
             this,
@@ -65,8 +68,9 @@ export class DungeonScene extends Scene {
             this.map.heightInPixels / 2
         );
         this.physics.add.collider(this.player, this.wallLayer);
+        this.physics.add.collider(this.player, this.stuffLayer);
     }
-    
+
     initEnemies() {
         this.enemyGroup = this.add.group();
     }
@@ -91,6 +95,15 @@ export class DungeonScene extends Scene {
                 (bullet as Bullet).onHitWall();
             }
         );
+
+        // Bullets collide with walls
+        this.physics.add.collider(
+            this.bulletGroup,
+            this.stuffLayer,
+            (bullet) => {
+                (bullet as Bullet).onHitWall();
+            }
+        );
     }
 
     initMap() {
@@ -111,29 +124,38 @@ export class DungeonScene extends Scene {
             width: this.dungeon.width,
             height: this.dungeon.height
         });
-        
+
         const tileset = map.addTilesetImage(
             'space-tiles-32-32',
             'space-tiles-32-32',
             32,
             32
         );
-        
+
         const groundLayer = map.createBlankLayer('Ground', tileset),
             wallLayer = map.createBlankLayer('Walls', tileset),
             stuffLayer = map.createBlankLayer('Stuff', tileset),
             shadowLayer = map.createBlankLayer('Shadow', tileset).fill(107);
-            
+        
+        // Shadows cover everything
+        shadowLayer.setDepth(999);
+
         this.map = map;
         this.wallLayer = wallLayer;
-        // this.stuffLayer = stuffLayer;
+        this.stuffLayer = stuffLayer;
         this.shadowLayer = shadowLayer;
         this.groundLayer = groundLayer;
         
         this.dungeon.rooms.forEach((room) => {
             const { x, y, width, height, left, right, top, bottom } = room,
-                dungeonRoom = new DungeonRoom(room, this, this.player, stuffLayer, shadowLayer);
-                
+                dungeonRoom = new DungeonRoom(
+                    room,
+                    this,
+                    this.player,
+                    stuffLayer,
+                    shadowLayer
+                );
+
             this.dungeonRooms.push(dungeonRoom);
             
             // Generate floor tiles in the room
@@ -154,7 +176,7 @@ export class DungeonScene extends Scene {
             wallLayer.putTileAt(335, right, top); // top right corner
             wallLayer.putTileAt(39, right, bottom); // bottom left corner
             wallLayer.putTileAt(45, left, bottom); // bottom right corner
-            
+
             // Non-corner walls
             wallLayer.fill(5, left + 1, top, width - 2, 1); // top
             wallLayer.fill(375, left + 1, bottom, width - 2, 1); // bottom
@@ -188,12 +210,19 @@ export class DungeonScene extends Scene {
                 }
             });
         });
-        
+
         // Collide with everything except empty tiles or floor tiles
         wallLayer.setCollisionByExclusion([71, -1]);
-        
+
+        stuffLayer.setCollisionByExclusion([-1]);
+
         // FIXME set the world bounds explicitly, unsure why this wasn't needed in the tutorial
-        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.physics.world.setBounds(
+            0,
+            0,
+            this.map.widthInPixels,
+            this.map.heightInPixels
+        );
         //this.showDebugWalls();
     }
 
@@ -208,6 +237,11 @@ export class DungeonScene extends Scene {
     private initCamera(): void {
         this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
         this.cameras.main.setZoom(2);
-        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.cameras.main.setBounds(
+            0,
+            0,
+            this.map.widthInPixels,
+            this.map.heightInPixels
+        );
     }
 }

@@ -29,13 +29,18 @@ export class LoadingScene extends Scene {
             frameWidth: 32,
             frameHeight: 32,
         });
-
+        
+        this.load.spritesheet('tank_spr', 'spritesheets/items-32-32.png', {
+            frameWidth: 32,
+            frameHeight: 64
+        });
+        
         this.load.image({key: 'space-tiles-32-32', url: 'tilemaps/tiles/space-tiles-32-32.png'});
         this.load.image({key: 'items-tiles-32-32', url: 'tilemaps/tiles/items-tiles-32-32.png'});
         this.load.tilemapTiledJSON('ship', 'tilemaps/json/ship-level-1.json');
         
         this.load.image('spark', 'particles/yellow.png');
-
+        
         this.load.audio('bgmusic', 'music/bg.mp3');
         this.load.audio('death', 'sfx/death.wav');
         this.load.audio('pickup', 'sfx/pickup.wav');
