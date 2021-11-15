@@ -192,6 +192,8 @@ export class DungeonScene extends Scene {
         // Collide with everything except empty tiles or floor tiles
         wallLayer.setCollisionByExclusion([71, -1]);
         
+        // FIXME set the world bounds explicitly, unsure why this wasn't needed in the tutorial
+        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         //this.showDebugWalls();
     }
 
@@ -204,11 +206,8 @@ export class DungeonScene extends Scene {
     }
 
     private initCamera(): void {
-        this.cameras.main.setSize(
-            this.game.scale.width,
-            this.game.scale.height
-        );
         this.cameras.main.startFollow(this.player, true, 0.09, 0.09);
         this.cameras.main.setZoom(2);
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     }
 }
