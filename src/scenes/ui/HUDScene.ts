@@ -41,7 +41,7 @@ export class HUDScene extends Scene {
 
     this.gameEndHandler = (status) => {
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0.6)');
-        this.game.scene.pause('level-1-scene');
+        this.game.scene.pause('dungeon-scene');
     
         this.gameEndPhrase = new Text(
           this,
@@ -62,8 +62,12 @@ export class HUDScene extends Scene {
         this.input.on('pointerdown', () => {
             this.game.events.off(EVENTS_NAME.chestLoot, this.chestLootHandler);
             this.game.events.off(EVENTS_NAME.gameEnd, this.gameEndHandler);
-            this.scene.get('level-1-scene').scene.restart();
-            this.scene.restart();
+            
+            // FIXME this is to try and prevent the click from registering as a weapon fire, but can cause multiple restarts
+            setTimeout(() => {
+              this.scene.get('dungeon-scene').scene.restart();
+              this.scene.restart();
+            }, 100);
         });
     };
 

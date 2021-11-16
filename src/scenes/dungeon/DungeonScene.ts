@@ -41,6 +41,7 @@ export class DungeonScene extends Scene {
         this.initEnemies();
         this.initBullets();
         this.initCamera();
+        this.activeDungeonRoom = undefined;
     }
 
     update(): void {
@@ -73,6 +74,14 @@ export class DungeonScene extends Scene {
 
     initEnemies() {
         this.enemyGroup = this.add.group();
+        this.physics.add.collider(this.enemyGroup, this.enemyGroup);
+        this.physics.add.collider(
+            this.player,
+            this.enemyGroup,
+            (player) => {
+                (player as Player).getDamage(1);
+            }
+        );
     }
 
     initBullets() {
@@ -219,14 +228,12 @@ export class DungeonScene extends Scene {
 
         stuffLayer.setCollisionByExclusion([-1]);
 
-        // FIXME set the world bounds explicitly, unsure why this wasn't needed in the tutorial
         this.physics.world.setBounds(
             0,
             0,
             this.map.widthInPixels,
             this.map.heightInPixels
         );
-        //this.showDebugWalls();
     }
 
     private showDebugWalls(): void {

@@ -114,7 +114,7 @@ export class Player extends Actor {
     public getDamage(value?: number): void {
         super.getDamage(value);
         
-        this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.hp);
+        this.scene.game.events.emit(EVENTS_NAME.playerHp, this.hp);
 
         if (this.hp <= 0) {
             this.scene.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.LOSE);
