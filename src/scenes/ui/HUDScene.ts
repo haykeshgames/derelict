@@ -14,11 +14,13 @@ export class HUDScene extends Scene {
   private gameEndPhrase!: Text;
   private gameEndHandler: (status: GameStatus) => void;
 
-  private hpValue !: Text;
+  private hpLabel !: Text;
   private hpValueHandler : (count: number) => void;
+  private hpBars !: GameObjects.Rectangle[];
+  private hpTweens !: Tweens.Tween[];
 
   private ammoCount !: Text;
-  private bars !: GameObjects.Rectangle[];
+  private ammoBars !: GameObjects.Rectangle[];
   private ammoTweens !: Tweens.Tween[];
   private ammoCountHandler : (count: number) => void;
 
@@ -70,20 +72,20 @@ export class HUDScene extends Scene {
         this.ammoCount.setText("∞");
         return;
       }
-      
+
       this.ammoCount.setText(`${count}`);
     }
 
-    this.playerFireHandler = (bulletsLeft) => {
+    this.playerFireHandler = (bulletsLeft : number) => {
       this.ammoTweens[bulletsLeft].play();
     }
 
-    this.playerReloadHandler = (bulletsLoaded) => {
-      for(let i = 0; i < this.bars.length; i++) {
+    this.playerReloadHandler = (bulletsLoaded : number) => {
+      for(let i = 0; i < this.ammoBars.length; i++) {
         if (i < bulletsLoaded) {
-          this.bars[i].setAlpha(1);
+          this.ammoBars[i].setAlpha(1);
         } else {
-          this.bars[i].setAlpha(0);
+          this.ammoBars[i].setAlpha(0);
         }
       }
     }
@@ -94,20 +96,29 @@ export class HUDScene extends Scene {
       this.playerReloadHandler(weapon.clip);
     }
 
-    this.hpValueHandler = (hpValue) => {
-      this.hpValue.setText(`Health: ${hpValue}`);
+    this.hpValueHandler = (hpValue : number) => {
+      for(let i = 0; i < this.hpBars.length; i++) {
+        if (i < hpValue) {
+          this.hpBars[i].setAlpha(1);
+        } else {
+          this.hpBars[i].setAlpha(0);
+        }
+      }
     }
   }
 
   create(): void {
     this.score = new Score(this, 20, 20, 0);
-    this.hpValue = new Text (this, 20, 40, 'Health: ???');
+    this.hpLabel = new Text (this, 20, 40, 'Health');
     this.curWeapon = new Text(this, 20, 60, '???');
     this.ammoCount = new Text(this, 150, 60, '???');
-    this.bars = [];
+    this.ammoBars = [];
     this.ammoTweens = [];
+    this.hpBars = [];
+    this.hpTweens = [];
 
     this.createAmmoBar();
+    this.createHealthBar();
 
     this.initListeners();
   }
@@ -134,7 +145,7 @@ export class HUDScene extends Scene {
       const bar = this.add.rectangle(220+(width*i), 72, width, height, 0xffffff, 1)
         .setStrokeStyle(1, 0x000000);
 
-      this.bars.push(bar)
+      this.ammoBars.push(bar)
     }
 
     this.initAmmoAnimations();
@@ -143,7 +154,7 @@ export class HUDScene extends Scene {
   private initAmmoAnimations() : void {
     for (let i = 0; i < 30; i++) {
       // make a new tween for the current bar
-      const bar = this.bars[i];
+      const bar = this.ammoBars[i];
       const tween = this.tweens.add({
         targets: bar,
         alpha: 0,
@@ -152,6 +163,39 @@ export class HUDScene extends Scene {
       })
 
       this.ammoTweens.push(tween);
+    }
+  }
+
+  private createHealthBar() : void {
+    // store the bars in a list for later
+    const height = 20;
+    const width = 5;
+
+    // create 100 bars
+    for (let i = 0; i < 100; i++)
+    {
+      // create each bar with position, rotation, and alpha
+      const bar = this.add.rectangle(220+(width*i), 52, width, height, 0xff0000, 1)
+        .setStrokeStyle(1, 0x000000);
+
+      this.hpBars.push(bar);
+    }
+
+    this.initHealthAnimations();
+  }
+
+  private initHealthAnimations() : void {
+    for (let i = 0; i < 100; i++) {
+      // make a new tween for the current bar
+      const bar = this.hpBars[i];
+      const tween = this.tweens.add({
+        targets: bar,
+        alpha: 0,
+        paused: true, 
+        duration: 1000
+      })
+
+      this.hpTweens.push(tween);
     }
   }
 }
