@@ -1,4 +1,3 @@
-import { Level1 } from '../scenes';
 import { DungeonScene } from '../scenes/dungeon/DungeonScene';
 import { Actor } from './Actor';
 import { Player } from './Player';
@@ -37,8 +36,7 @@ export class Enemy extends Actor {
 
     preUpdate(time: number, delta: number): void {
         super.preUpdate(time, delta);
-        
-        // FIXME this is definitely not the best way to do this, but it works
+
         if (this.destroyOnUpdate && !this.anims.isPlaying) {
             this.destroy();
             return;

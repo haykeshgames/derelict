@@ -1,5 +1,4 @@
-import { GameObjects, Scene } from 'phaser';
-import { Player } from 'src/classes/Player';
+import { Scene } from 'phaser';
 
 export class LoadingScene extends Scene {
 

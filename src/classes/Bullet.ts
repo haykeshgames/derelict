@@ -1,7 +1,6 @@
 import { Level1 } from '../scenes';
 import { Actor } from './Actor';
 import { Enemy } from './enemy';
-import { Player } from './Player';
 
 export class Bullet extends Actor {
     private SPEED = 500;

@@ -75,8 +75,6 @@ export class Level1 extends Scene {
             this.wallsLayer.width,
             this.wallsLayer.height
         );
-
-        // this.showDebugWalls();
     }
     
     public addEnemy(enemy: Enemy): void {
@@ -87,14 +85,6 @@ export class Level1 extends Scene {
     public addBullet(bullet: Bullet): void {
         this.bulletGroup.add(bullet, true);
         this.physics.add.existing(bullet);
-    }
-    
-    private showDebugWalls(): void {
-        const debugGraphics = this.add.graphics().setAlpha(0.5);
-        this.wallsLayer.renderDebug(debugGraphics, {
-            tileColor: null,
-            collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255)
-        });
     }
 
     private initChests(): void {
@@ -152,7 +142,7 @@ export class Level1 extends Scene {
         this.enemyGroup = this.add.group();
         
         // Spawn initial enemies
-        const enemiesPoints = gameObjectsToObjectPoints(
+        gameObjectsToObjectPoints(
             this.map.filterObjects(
                 'Enemies',
                 (obj) => obj.name === 'EnemyPoint'

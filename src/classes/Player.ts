@@ -1,7 +1,4 @@
-import { Level1 } from '../scenes';
 import { Actor } from "./Actor";
-import { Bullet } from './Bullet';
-import { Text } from './text';
 import { EVENTS_NAME, GameStatus } from '../consts';
 import { AutoRifle } from './AutoRifle';
 import { Weapon } from './Weapon';
