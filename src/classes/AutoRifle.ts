@@ -2,6 +2,8 @@ import { EVENTS_NAME } from '../consts';
 import { Level1 } from '../scenes';
 import { Bullet } from './Bullet';
 import { Weapon } from './Weapon';
+import { Scene } from 'phaser';
+import { Player } from './Player';
 
 export class AutoRifle extends Weapon {
     get fireRate() : number {
@@ -12,16 +14,22 @@ export class AutoRifle extends Weapon {
         return 'AutoRifle';
     }
 
+    get clipSize() : number {
+        return 30;
+    }
+
     get fireSound() : Phaser.Sound.BaseSound {
         return this.scene?.sound.get('fireAutoRifle');
     }
 
-    get noAmmoSound() : Phaser.Sound.BaseSound {
-        return this.scene?.sound.get('noAmmo');
+    constructor(scene: Scene, player : Player) {
+        super(scene, player);
+        this._clip = 30;
+        this._ammo = 120;
     }
 
     fire(x : number, y : number, dir : Phaser.Math.Vector2) : void {
-        if (this.player.clip > 0) {
+        if (this._clip > 0) {
             // Fire a bullet!
             this.fireSound?.play();
 
@@ -30,7 +38,11 @@ export class AutoRifle extends Weapon {
                 .setScale(0.6)
                 .setName(`bullet_${Date.now()}`);
 
-            this.player.useAmmo(1);
+            this._ammo = Math.max(0, this._ammo - 1);
+            this.scene.game.events.emit(EVENTS_NAME.ammoCount, this._ammo);
+
+            this._clip = Math.max(0, this._clip - 1);
+            this.scene.game.events.emit(EVENTS_NAME.playerFire, this._clip);
         } else {
             // No ammo!
             this.noAmmoSound?.play();                    

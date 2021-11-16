@@ -20,10 +20,6 @@ export class Player extends Actor {
 
     private weapon : Weapon;
 
-    public ammo = 120;
-    public clip = 30;
-    public clipSize = 30;
-
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
 
@@ -50,7 +46,6 @@ export class Player extends Actor {
         this.initAnimations();
 
         setTimeout(() => {
-            this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
             this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
             this.scene.game.events.emit(EVENTS_NAME.playerHp, this.hp);
         }, 5);
@@ -63,9 +58,8 @@ export class Player extends Actor {
     }
 
     private reloadWeapon() {
-        let remaining = this.ammo - this.clip;
-        this.clip += Math.min(remaining, this.clipSize - this.clip);
-        this.scene.game.events.emit(EVENTS_NAME.playerReload, this.clip);
+        this.weapon.reloadWeapon();
+        this.scene.game.events.emit(EVENTS_NAME.playerReload, this.weapon.clip);
         this.scene.sound.get('weaponSwap').play();
         this.anims.play('attack');
     }
@@ -127,15 +121,7 @@ export class Player extends Actor {
         }
     }
 
-    public useAmmo(count: number) {
-        this.ammo = Math.max(0, this.ammo - count);
-        this.clip = Math.max(0, this.clip - count);
-        this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
-        this.scene.game.events.emit(EVENTS_NAME.playerFire, this.clip);
-    }
-
-    public addAmmo(count: number) {
-        this.ammo += count;
-        this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
+    addAmmo(count : number) {
+        this.weapon.addAmmo(count);
     }
 }

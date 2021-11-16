@@ -74,13 +74,19 @@ export class HUDScene extends Scene {
     }
 
     this.playerReloadHandler = (bulletsLoaded) => {
-      for(let i = 0; i < bulletsLoaded; i++) {
-        this.bars[i].setAlpha(1);
+      for(let i = 0; i < this.bars.length; i++) {
+        if (i < bulletsLoaded) {
+          this.bars[i].setAlpha(1);
+        } else {
+          this.bars[i].setAlpha(0);
+        }
       }
     }
 
     this.weaponSwapHandler = (weapon : Weapon) => {
       this.curWeapon.setText(weapon.name);
+      this.ammoCount.setText(`Ammo: ${weapon.ammo}`);
+      this.playerReloadHandler(weapon.clip);
     }
 
     this.hpValueHandler = (hpValue) => {

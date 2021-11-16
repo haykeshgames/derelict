@@ -1,3 +1,4 @@
+import { EVENTS_NAME } from '../consts';
 import { Scene } from 'phaser';
 import { Player } from './Player';
 
@@ -5,6 +6,17 @@ import { Player } from './Player';
 export class Weapon {
     protected scene : Scene;
     protected player : Player;
+    protected _ammo : number = 0;
+
+    get ammo() : number {
+        return this._ammo;
+    }
+
+    protected _clip : number = 0;
+
+    get clip() : number {
+        return this._clip;
+    }
 
     // Time the rifle was last fired - so we can limit by the fireRate
     private lastFireTime : number = 0;
@@ -17,9 +29,21 @@ export class Weapon {
         return 'BaseWeapon';
     }
 
+    get clipSize() : number {
+        return 0;
+    }
+
+    get noAmmoSound() : Phaser.Sound.BaseSound {
+        return this.scene?.sound.get('noAmmo');
+    }
+
     constructor(scene: Scene, player : Player) {
         this.scene = scene;
         this.player = player;
+
+        setTimeout(() => {
+            this.scene.game.events.emit(EVENTS_NAME.ammoCount, this._ammo);
+        });
     }
 
     // Called by the player update
@@ -50,7 +74,20 @@ export class Weapon {
         return false;
     }
 
-    fire(x : number, y : number, dir : Phaser.Math.Vector2) : void {
+    fire(x : number, y : number, dir : Phaser.Math.Vector2) : void {}
 
+    reloadWeapon() : void {
+        if (this.ammo === -1) {
+            this._clip = this.clipSize;
+            return;
+        }
+
+        let remaining = this._ammo - this._clip;
+        this._clip += Math.min(remaining, this.clipSize - this._clip);
+    }
+
+    addAmmo(count : number) : void {
+        this._ammo += count;
+        this.scene.game.events.emit(EVENTS_NAME.ammoCount, this._ammo);
     }
 }
