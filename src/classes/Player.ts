@@ -13,6 +13,7 @@ export class Player extends Actor {
     private keyS : Phaser.Input.Keyboard.Key;
     private keyD : Phaser.Input.Keyboard.Key;
     private keyTab : Phaser.Input.Keyboard.Key;
+    private keyR : Phaser.Input.Keyboard.Key;
 
     // How fast we move
     private speed = 250;
@@ -22,7 +23,9 @@ export class Player extends Actor {
 
     private weapon : Weapon;
 
-    public ammo = 200;
+    public ammo = 120;
+    public clip = 30;
+    public clipSize = 30;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
@@ -37,8 +40,11 @@ export class Player extends Actor {
         this.keyS = this.scene.input.keyboard.addKey('S');
         this.keyD = this.scene.input.keyboard.addKey('D');
         this.keyTab = this.scene.input.keyboard.addKey('TAB', true, true);
+        this.keyR = this.scene.input.keyboard.addKey('R');
 
         this.keyTab.on('down', () => this.swapWeapons());
+        this.keyR.on('down', () => this.reloadWeapon());
+        
 
         // Physics
         this.getBody().setSize(12, 16);
@@ -57,6 +63,14 @@ export class Player extends Actor {
         this.weapon = this.weapon === this.autoRifle ? this.pistol : this.autoRifle;
         this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
         this.scene.sound.get('weaponSwap').play();
+    }
+
+    private reloadWeapon() {
+        let remaining = this.ammo - this.clip;
+        this.clip += Math.min(remaining, this.clipSize - this.clip);
+        this.scene.game.events.emit(EVENTS_NAME.playerReload, this.clip);
+        this.scene.sound.get('weaponSwap').play();
+        this.anims.play('attack');
     }
 
     private initAnimations() : void {
@@ -118,7 +132,9 @@ export class Player extends Actor {
 
     public useAmmo(count: number) {
         this.ammo = Math.max(0, this.ammo - count);
+        this.clip = Math.max(0, this.clip - count);
         this.scene.game.events.emit(EVENTS_NAME.ammoCount, this.ammo);
+        this.scene.game.events.emit(EVENTS_NAME.playerFire, this.clip);
     }
 
     public addAmmo(count: number) {

@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Scene, GameObjects, Tweens } from 'phaser';
 
 import { Score, ScoreOperations } from '../../classes/score';
 import { EVENTS_NAME, GameStatus } from '../../consts';
@@ -18,7 +18,12 @@ export class HUDScene extends Scene {
   private hpValueHandler : (count: number) => void;
 
   private ammoCount !: Text;
+  private bars !: GameObjects.Rectangle[];
+  private ammoTweens !: Tweens.Tween[];
   private ammoCountHandler : (count: number) => void;
+
+  private playerFireHandler : (bulletsLeft: number) => void;
+  private playerReloadHandler : (bulletsLoaded: number) => void;
 
   private curWeapon !: Text;
   private weaponSwapHandler : (weapon : Weapon) => void;
@@ -64,6 +69,16 @@ export class HUDScene extends Scene {
       this.ammoCount.setText(`Ammo: ${count}`);
     }
 
+    this.playerFireHandler = (bulletsLeft) => {
+      this.ammoTweens[bulletsLeft].play();
+    }
+
+    this.playerReloadHandler = (bulletsLoaded) => {
+      for(let i = 0; i < bulletsLoaded; i++) {
+        this.bars[i].setAlpha(1);
+      }
+    }
+
     this.weaponSwapHandler = (weapon : Weapon) => {
       this.curWeapon.setText(weapon.name);
     }
@@ -78,6 +93,11 @@ export class HUDScene extends Scene {
     this.hpValue = new Text (this, 20, 100, 'Health: ???');
     this.curWeapon = new Text(this, 20, 180, '???');
     this.ammoCount = new Text(this, 20, 260, 'Ammo: ???');
+    this.bars = [];
+    this.ammoTweens = [];
+
+    this.createAmmoBar();
+
     this.initListeners();
   }
 
@@ -85,7 +105,42 @@ export class HUDScene extends Scene {
     this.game.events.on(EVENTS_NAME.chestLoot, this.chestLootHandler, this);
     this.game.events.once(EVENTS_NAME.gameEnd, this.gameEndHandler, this);
     this.game.events.on(EVENTS_NAME.ammoCount, this.ammoCountHandler, this);
+    this.game.events.on(EVENTS_NAME.playerFire, this.playerFireHandler, this);
+    this.game.events.on(EVENTS_NAME.playerReload, this.playerReloadHandler, this);
     this.game.events.on(EVENTS_NAME.weaponSwap, this.weaponSwapHandler, this);
     this.game.events.on(EVENTS_NAME.playerHp, this.hpValueHandler, this);
+  }
+
+  private createAmmoBar() : void {
+    // store the bars in a list for later
+    const height = 20;
+    const width = 5;
+
+    // create 30 bars
+    for (let i = 0; i < 30; i++)
+    {
+      // create each bar with position, rotation, and alpha
+      const bar = this.add.rectangle(20+(width*i), 260, width, height, 0xffffff, 1)
+        .setStrokeStyle(1, 0x000000);
+
+      this.bars.push(bar)
+    }
+
+    this.initAmmoAnimations();
+  }
+
+  private initAmmoAnimations() : void {
+    for (let i = 0; i < 30; i++) {
+      // make a new tween for the current bar
+      const bar = this.bars[i];
+      const tween = this.tweens.add({
+        targets: bar,
+        alpha: 0,
+        paused: true, 
+        duration: 1000
+      })
+
+      this.ammoTweens.push(tween);
+    }
   }
 }

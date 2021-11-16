@@ -21,7 +21,7 @@ export class AutoRifle extends Weapon {
     }
 
     fire(x : number, y : number, dir : Phaser.Math.Vector2) : void {
-        if (this.player.ammo > 0) {
+        if (this.player.clip > 0) {
             // Fire a bullet!
             this.fireSound?.play();
 
