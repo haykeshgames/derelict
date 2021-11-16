@@ -66,7 +66,12 @@ export class HUDScene extends Scene {
     };
 
     this.ammoCountHandler = (count) => {
-      this.ammoCount.setText(`Ammo: ${count}`);
+      if(count === -1) {
+        this.ammoCount.setText("∞");
+        return;
+      }
+      
+      this.ammoCount.setText(`${count}`);
     }
 
     this.playerFireHandler = (bulletsLeft) => {
@@ -85,7 +90,7 @@ export class HUDScene extends Scene {
 
     this.weaponSwapHandler = (weapon : Weapon) => {
       this.curWeapon.setText(weapon.name);
-      this.ammoCount.setText(`Ammo: ${weapon.ammo}`);
+      this.ammoCountHandler(weapon.ammo);
       this.playerReloadHandler(weapon.clip);
     }
 
@@ -96,9 +101,9 @@ export class HUDScene extends Scene {
 
   create(): void {
     this.score = new Score(this, 20, 20, 0);
-    this.hpValue = new Text (this, 20, 100, 'Health: ???');
-    this.curWeapon = new Text(this, 20, 180, '???');
-    this.ammoCount = new Text(this, 20, 260, 'Ammo: ???');
+    this.hpValue = new Text (this, 20, 40, 'Health: ???');
+    this.curWeapon = new Text(this, 20, 60, '???');
+    this.ammoCount = new Text(this, 150, 60, '???');
     this.bars = [];
     this.ammoTweens = [];
 
@@ -126,7 +131,7 @@ export class HUDScene extends Scene {
     for (let i = 0; i < 30; i++)
     {
       // create each bar with position, rotation, and alpha
-      const bar = this.add.rectangle(20+(width*i), 260, width, height, 0xffffff, 1)
+      const bar = this.add.rectangle(220+(width*i), 72, width, height, 0xffffff, 1)
         .setStrokeStyle(1, 0x000000);
 
       this.bars.push(bar)
