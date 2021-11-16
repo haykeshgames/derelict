@@ -1,5 +1,6 @@
 import Dungeon from '@mikewesthad/dungeon';
 import { Scene, Tilemaps } from 'phaser';
+import { EVENTS_NAME, GameStatus } from '../../consts';
 import { Bullet } from '../../classes/Bullet';
 import { DungeonRoom } from '../../classes/DungeonRoom';
 import { Enemy } from '../../classes/enemy';
@@ -20,6 +21,12 @@ export class DungeonScene extends Scene {
 
     private dungeonRooms: Array<DungeonRoom> = [];
     private activeDungeonRoom!: DungeonRoom | null | undefined;
+
+    get isFinishedSpawning() : boolean {
+        return this.dungeonRooms.every((room) => {
+            return room.isFinishedSpawning;
+        });
+    }
 
     constructor() {
         super('dungeon-scene');
@@ -59,6 +66,10 @@ export class DungeonScene extends Scene {
             this.activeDungeonRoom?.setActive(false);
             activeDungeonRoom?.setActive(true);
             this.activeDungeonRoom = activeDungeonRoom;
+        }
+
+        if(this.isFinishedSpawning && this.enemyGroup.getLength() === 0) {
+            this.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.WIN);
         }
     }
 

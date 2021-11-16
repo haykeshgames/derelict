@@ -32,12 +32,7 @@ export class HUDScene extends Scene {
 
   constructor() {
     super('ui-scene');
-    this.chestLootHandler = () => {
-        this.score.changeValue(ScoreOperations.INCREASE, 10);
-        if (this.score.getValue() === gameConfig.winScore) {
-            this.game.events.emit(EVENTS_NAME.gameEnd, 'win');
-        }
-    }
+    this.chestLootHandler = () => {};
 
     this.gameEndHandler = (status) => {
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0.6)');

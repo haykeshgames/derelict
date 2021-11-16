@@ -13,6 +13,12 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
     public room: Room;
     private spawners: Array<Spawner> = [];
 
+    get isFinishedSpawning() : boolean {
+        return this.spawners.every((spawner) => {
+            return spawner.isFinishedSpawning;
+        });
+    }
+
     setActive(active: boolean): this {
         if (this.active === active) return this;
 

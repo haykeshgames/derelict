@@ -8,6 +8,10 @@ export class Spawner extends Phaser.GameObjects.GameObject {
     private spawnAmount !: integer;
     private spawnCount = 0;
     private lastSpawnTime !: number;
+
+    get isFinishedSpawning() : boolean {
+        return this.spawnCount >= this.spawnAmount;
+    }
     
     constructor(scene: DungeonScene, x: number, y: number) {
         super(scene, 'spawner');
@@ -26,7 +30,7 @@ export class Spawner extends Phaser.GameObjects.GameObject {
     }    
     
     private maybeSpawnEnemy() : void {
-        if (this.spawnCount >= this.spawnAmount) return;
+        if (this.isFinishedSpawning) return;
         
         const curTime = Date.now();
         if ((curTime - this.lastSpawnTime) < this.spawnRate) return;
