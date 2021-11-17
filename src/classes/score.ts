@@ -11,6 +11,10 @@ export class Score extends Text {
   private killsValue: number;
   private millis : number;
 
+  get currentScore() : number {
+    return this.scoreValue;
+  }
+
   constructor(scene: Phaser.Scene, x: number, y: number, initScore = 0, initKills = 0) {
     super(scene, x, y, `Score: ${initScore} Kills: ${initKills} Time: 0:00`);
 
@@ -63,6 +67,17 @@ export class Score extends Text {
   update(timeInMillis : number) : void {
     this.millis = timeInMillis;
     this.updateLabel();
+  }
+
+  public updateScore() : void {
+    let multiplier = 1;
+    if(this.millis < 60000) {
+      multiplier = 3;
+    } else if (this.millis < 120000) {
+      multiplier = 2;
+    }
+
+    this.scoreValue += multiplier * this.killsValue;
   }
 
 }

@@ -33,6 +33,7 @@ export class HUDScene extends Scene {
   private enemyDeathHandler : () => void;
   private levelDone : boolean;
   private startTime : number;
+  private lastScore : number;
 
   constructor() {
     super('ui-scene');
@@ -43,13 +44,20 @@ export class HUDScene extends Scene {
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0.6)');
         this.game.scene.pause('dungeon-scene');
     
+        if(status === GameStatus.WIN) {
+          this.score.updateScore();
+          this.lastScore = this.score.currentScore;
+        } else {
+          this.lastScore = 0;
+        }
+
         this.gameEndPhrase = new Text(
           this,
           this.game.scale.width / 2,
           this.game.scale.height * 0.4,
           status === GameStatus.LOSE
-            ? `WASTED!\nCLICK TO RESTART`
-            : `YOU ARE ROCK!\nCLICK TO RESTART`,
+            ? `WASTED!\nSCORE: ${this.score.currentScore}\nCLICK TO RESTART`
+            : `LEVEL CLEAR!\nSCORE: ${this.score.currentScore}\nCLICK TO RESTART`,
         )
           .setAlign('center')
           .setColor(status === GameStatus.LOSE ? '#ff0000' : '#ffffff');
@@ -62,6 +70,12 @@ export class HUDScene extends Scene {
         this.input.on('pointerdown', () => {
             this.game.events.off(EVENTS_NAME.chestLoot, this.chestLootHandler);
             this.game.events.off(EVENTS_NAME.gameEnd, this.gameEndHandler);
+            this.game.events.off(EVENTS_NAME.ammoCount, this.ammoCountHandler);
+            this.game.events.off(EVENTS_NAME.playerFire, this.playerFireHandler);
+            this.game.events.off(EVENTS_NAME.playerReload, this.playerReloadHandler);
+            this.game.events.off(EVENTS_NAME.weaponSwap, this.weaponSwapHandler);
+            this.game.events.off(EVENTS_NAME.playerHp, this.hpValueHandler);
+            this.game.events.off(EVENTS_NAME.enemyDeath, this.enemyDeathHandler);
             
             // FIXME this is to try and prevent the click from registering as a weapon fire, but can cause multiple restarts
             setTimeout(() => {
@@ -118,10 +132,11 @@ export class HUDScene extends Scene {
 
     this.levelDone = false;
     this.startTime = 0;
+    this.lastScore = 0;
   }
 
   create(): void {
-    this.score = new Score(this, 20, 20, 0);
+    this.score = new Score(this, 20, 20, this.lastScore, 0);
     this.hpLabel = new Text (this, 20, 40, 'Health');
     this.curWeapon = new Text(this, 20, 60, '???');
     this.ammoCount = new Text(this, 150, 60, '???');
@@ -145,7 +160,7 @@ export class HUDScene extends Scene {
 
   private initListeners(): void {
     this.game.events.on(EVENTS_NAME.chestLoot, this.chestLootHandler, this);
-    this.game.events.once(EVENTS_NAME.gameEnd, this.gameEndHandler, this);
+    this.game.events.on(EVENTS_NAME.gameEnd, this.gameEndHandler, this);
     this.game.events.on(EVENTS_NAME.ammoCount, this.ammoCountHandler, this);
     this.game.events.on(EVENTS_NAME.playerFire, this.playerFireHandler, this);
     this.game.events.on(EVENTS_NAME.playerReload, this.playerReloadHandler, this);
