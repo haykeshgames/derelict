@@ -8,16 +8,18 @@ export enum ScoreOperations {
 
 export class Score extends Text {
   private scoreValue: number;
+  private killsValue: number;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, initScore = 0) {
-    super(scene, x, y, `Score: ${initScore}`);
+  constructor(scene: Phaser.Scene, x: number, y: number, initScore = 0, initKills = 0) {
+    super(scene, x, y, `Score: ${initScore} Kills: ${initKills}`);
 
     scene.add.existing(this);
 
     this.scoreValue = initScore;
+    this.killsValue = initKills;
   }
 
-  public changeValue(operation: ScoreOperations, value: number): void {
+  public changeScore(operation: ScoreOperations, value: number): void {
     switch (operation) {
       case ScoreOperations.INCREASE:
         this.scoreValue += value;
@@ -32,10 +34,24 @@ export class Score extends Text {
         break;
     }
 
-    this.setText(`Score: ${this.scoreValue}`);
+    this.setText(`Score: ${this.scoreValue} Kills: ${this.killsValue}`);
   }
 
-  public getValue(): number {
-    return this.scoreValue;
+  public changeKills(operation: ScoreOperations, value: number) : void {
+    switch (operation) {
+      case ScoreOperations.INCREASE:
+        this.killsValue += value;
+        break;
+      case ScoreOperations.DECREASE:
+        this.killsValue -= value;
+        break;
+      case ScoreOperations.SET_VALUE:
+        this.killsValue = value;
+        break;
+      default:
+        break;
+    }
+
+    this.setText(`Score: ${this.scoreValue} Kills: ${this.killsValue}`);
   }
 }

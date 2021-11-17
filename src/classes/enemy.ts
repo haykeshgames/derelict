@@ -1,4 +1,5 @@
 import { DungeonScene } from '../scenes/dungeon/DungeonScene';
+import { EVENTS_NAME } from '../consts';
 import { Actor } from './Actor';
 import { Player } from './Player';
 
@@ -24,9 +25,7 @@ export class Enemy extends Actor {
         
         // ADD TO SCENE
         scene.addEnemy(this);
-        
-        // Add to enemies group
-        
+
         // PHYSICS MODEL
         this.getBody().setSize(32, 32);
         this.getBody().setOffset(0, 0);
@@ -68,6 +67,8 @@ export class Enemy extends Actor {
         this.anims.play('enemy_death');
         this.deathSound.play({ delay: 0.5 });
         this.destroyOnUpdate = true;
+
+        this.scene.game.events.emit(EVENTS_NAME.enemyDeath);
     }
     
     public setTarget(target: Player): void {

@@ -30,6 +30,8 @@ export class HUDScene extends Scene {
   private curWeapon !: Text;
   private weaponSwapHandler : (weapon : Weapon) => void;
 
+  private enemyDeathHandler : () => void;
+
   constructor() {
     super('ui-scene');
     this.chestLootHandler = () => {};
@@ -104,6 +106,10 @@ export class HUDScene extends Scene {
         }
       }
     }
+
+    this.enemyDeathHandler = () => {
+      this.score.changeKills(ScoreOperations.INCREASE, 1);
+    }
   }
 
   create(): void {
@@ -130,6 +136,7 @@ export class HUDScene extends Scene {
     this.game.events.on(EVENTS_NAME.playerReload, this.playerReloadHandler, this);
     this.game.events.on(EVENTS_NAME.weaponSwap, this.weaponSwapHandler, this);
     this.game.events.on(EVENTS_NAME.playerHp, this.hpValueHandler, this);
+    this.game.events.on(EVENTS_NAME.enemyDeath, this.enemyDeathHandler, this);
   }
 
   private createAmmoBar() : void {
