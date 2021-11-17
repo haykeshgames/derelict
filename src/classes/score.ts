@@ -9,14 +9,23 @@ export enum ScoreOperations {
 export class Score extends Text {
   private scoreValue: number;
   private killsValue: number;
+  private millis : number;
 
   constructor(scene: Phaser.Scene, x: number, y: number, initScore = 0, initKills = 0) {
-    super(scene, x, y, `Score: ${initScore} Kills: ${initKills}`);
+    super(scene, x, y, `Score: ${initScore} Kills: ${initKills} Time: 0:00`);
 
     scene.add.existing(this);
 
     this.scoreValue = initScore;
     this.killsValue = initKills;
+    this.millis = 0;
+  }
+
+  private updateLabel() : void {
+    let seconds = Math.trunc(this.millis / 1000) % 60;
+    let minutes = Math.trunc(this.millis / 60000) % 60;
+    let secondsStr = seconds.toString().padStart(2, '0');
+    this.setText(`Score: ${this.scoreValue} Kills: ${this.killsValue} Time: ${minutes}:${secondsStr}`);
   }
 
   public changeScore(operation: ScoreOperations, value: number): void {
@@ -33,8 +42,6 @@ export class Score extends Text {
       default:
         break;
     }
-
-    this.setText(`Score: ${this.scoreValue} Kills: ${this.killsValue}`);
   }
 
   public changeKills(operation: ScoreOperations, value: number) : void {
@@ -51,7 +58,11 @@ export class Score extends Text {
       default:
         break;
     }
-
-    this.setText(`Score: ${this.scoreValue} Kills: ${this.killsValue}`);
   }
+
+  update(timeInMillis : number) : void {
+    this.millis = timeInMillis;
+    this.updateLabel();
+  }
+
 }

@@ -31,12 +31,15 @@ export class HUDScene extends Scene {
   private weaponSwapHandler : (weapon : Weapon) => void;
 
   private enemyDeathHandler : () => void;
+  private levelDone : boolean;
+  private startTime : number;
 
   constructor() {
     super('ui-scene');
     this.chestLootHandler = () => {};
 
     this.gameEndHandler = (status) => {
+        this.levelDone = true;
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0.6)');
         this.game.scene.pause('dungeon-scene');
     
@@ -64,6 +67,8 @@ export class HUDScene extends Scene {
             setTimeout(() => {
               this.scene.get('dungeon-scene').scene.restart();
               this.scene.restart();
+              this.levelDone = false;
+              this.startTime = this.time.now;
             }, 100);
         });
     };
@@ -110,6 +115,9 @@ export class HUDScene extends Scene {
     this.enemyDeathHandler = () => {
       this.score.changeKills(ScoreOperations.INCREASE, 1);
     }
+
+    this.levelDone = false;
+    this.startTime = 0;
   }
 
   create(): void {
@@ -126,6 +134,13 @@ export class HUDScene extends Scene {
     this.createHealthBar();
 
     this.initListeners();
+    this.startTime = this.time.now;
+  }
+
+  update() : void {
+    if(!this.levelDone) {
+      this.score.update(this.time.now - this.startTime);
+    }
   }
 
   private initListeners(): void {
