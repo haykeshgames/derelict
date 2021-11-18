@@ -4,6 +4,7 @@ import { DungeonScene } from '../scenes/dungeon/DungeonScene';
 import { GreenTank } from './GreenTank';
 import { Player } from './Player';
 import { Spawner } from './Spawner';
+import { Chest } from './Chest';
 
 export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private groundLayer: Tilemaps.TilemapLayer;
@@ -87,6 +88,21 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             worldY = this.stuffLayer.tileToWorldY(tileY);
             
         new GreenTank(this.scene as DungeonScene, worldX, worldY);
+    }
+
+    public maybeCreateChests() : Chest[] {
+        const numChests = Phaser.Math.Between(0, 1);
+        let chests = []
+        for (let i = 0; i < numChests; i++) {
+            const { x, y } = this.getRandomTile();
+
+            const worldX = this.stuffLayer.tileToWorldX(x),
+                worldY = this.stuffLayer.tileToWorldY(y);
+            
+            chests.push(new Chest(this.scene as DungeonScene, worldX, worldY));
+        }
+
+        return chests;
     }
 
     private onActivate(): void {

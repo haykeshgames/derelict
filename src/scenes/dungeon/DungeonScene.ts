@@ -5,6 +5,7 @@ import { Bullet } from '../../classes/Bullet';
 import { DungeonRoom } from '../../classes/DungeonRoom';
 import { Enemy } from '../../classes/enemy';
 import { Player } from '../../classes/Player';
+import { Chest } from '../../classes/Chest';
 
 export class DungeonScene extends Scene {
     private dungeon!: Dungeon;
@@ -18,6 +19,7 @@ export class DungeonScene extends Scene {
 
     private enemyGroup!: Phaser.GameObjects.Group;
     private bulletGroup!: Phaser.GameObjects.Group;
+    private chestGroup!: Phaser.GameObjects.Group;
 
     private dungeonRooms: Array<DungeonRoom> = [];
     private activeDungeonRoom!: DungeonRoom | null | undefined;
@@ -42,6 +44,11 @@ export class DungeonScene extends Scene {
         this.physics.add.existing(bullet);
     }
 
+    public addChest(chest: Chest) : void {
+        this.chestGroup.add(chest, true);
+        this.physics.add.existing(chest);
+    }
+
     create(): void {
         this.activeDungeonRoom = undefined;
         this.dungeonRooms = [];
@@ -50,6 +57,7 @@ export class DungeonScene extends Scene {
         this.initEnemies();
         this.initBullets();
         this.initCamera();
+        this.initChests();
     }
 
     update(): void {
@@ -125,6 +133,33 @@ export class DungeonScene extends Scene {
                 (bullet as Bullet).onHitWall();
             }
         );
+    }
+
+    initChests() {
+        this.chestGroup = this.add.group();
+        this.physics.add.overlap(
+            this.player, 
+            this.chestGroup, 
+            (p, chest) => {
+                const player = p as Player;
+                if(player.weapon.name !== 'AutoRifle') {
+                    player.swapWeapons();
+                }
+                player.addAmmo(30);
+                player.reloadWeapon();
+
+                chest.destroy();
+                this.cameras.main.flash();
+                this.sound.play('pickup');
+            }
+        );
+
+        this.dungeonRooms.forEach((room) => {
+            const chests = room.maybeCreateChests();
+            chests.forEach((chest) => {
+                this.addChest(chest);
+            })
+        });
     }
 
     initMap() {

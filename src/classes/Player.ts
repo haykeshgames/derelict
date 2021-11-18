@@ -18,14 +18,17 @@ export class Player extends Actor {
     private pistol : Pistol;
     private autoRifle : AutoRifle;
 
-    private weapon : Weapon;
+    private _weapon : Weapon;
+    get weapon() : Weapon {
+        return this._weapon;
+    }
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
 
         this.pistol = new Pistol(scene, this);
         this.autoRifle = new AutoRifle(scene, this);
-        this.weapon = this.autoRifle;
+        this._weapon = this.autoRifle;
 
         // Keys
         this.keyW = this.scene.input.keyboard.addKey('W');
@@ -46,20 +49,20 @@ export class Player extends Actor {
         this.initAnimations();
 
         setTimeout(() => {
-            this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
+            this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this._weapon);
             this.scene.game.events.emit(EVENTS_NAME.playerHp, this.hp);
         }, 5);
     }
 
-    private swapWeapons() {
-        this.weapon = this.weapon === this.autoRifle ? this.pistol : this.autoRifle;
-        this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this.weapon);
+    public swapWeapons() : void {
+        this._weapon = this._weapon === this.autoRifle ? this.pistol : this.autoRifle;
+        this.scene.game.events.emit(EVENTS_NAME.weaponSwap, this._weapon);
         this.scene.sound.get('weaponSwap').play();
     }
 
-    private reloadWeapon() {
-        this.weapon.reloadWeapon();
-        this.scene.game.events.emit(EVENTS_NAME.playerReload, this.weapon.clip);
+    public reloadWeapon() : void {
+        this._weapon.reloadWeapon();
+        this.scene.game.events.emit(EVENTS_NAME.playerReload, this._weapon.clip);
         this.scene.sound.get('weaponSwap').play();
         this.anims.play('attack');
     }
@@ -106,7 +109,7 @@ export class Player extends Actor {
         this.getBody().setVelocity(velocity.x, velocity.y);
         this.checkFlip();
 
-        if (this.weapon.update()) {
+        if (this._weapon.update()) {
             this.anims.play('attack');
         }
     }
@@ -121,7 +124,7 @@ export class Player extends Actor {
         }
     }
 
-    addAmmo(count : number) {
-        this.weapon.addAmmo(count);
+    addAmmo(count : number) : void {
+        this._weapon.addAmmo(count);
     }
 }
