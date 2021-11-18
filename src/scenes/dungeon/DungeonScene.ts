@@ -43,12 +43,13 @@ export class DungeonScene extends Scene {
     }
 
     create(): void {
+        this.activeDungeonRoom = undefined;
+        this.dungeonRooms = [];
         this.initMap();
         this.initPlayer();
         this.initEnemies();
         this.initBullets();
         this.initCamera();
-        this.activeDungeonRoom = undefined;
     }
 
     update(): void {
