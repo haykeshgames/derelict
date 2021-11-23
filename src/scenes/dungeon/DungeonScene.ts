@@ -71,7 +71,7 @@ export class DungeonScene extends Scene {
             activeDungeonRoom = this.dungeonRooms.find(
                 (it) => it.room === activeRoom
             );
-
+        
         if (this.activeDungeonRoom !== activeDungeonRoom) {
             this.activeDungeonRoom?.setActive(false);
             activeDungeonRoom?.setActive(true);
@@ -82,7 +82,7 @@ export class DungeonScene extends Scene {
             this.game.events.emit(EVENTS_NAME.gameEnd, GameStatus.WIN);
         }
     }
-
+    
     initPlayer() {
         this.player = new Player(
             this,

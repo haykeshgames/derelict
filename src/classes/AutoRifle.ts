@@ -34,7 +34,7 @@ export class AutoRifle extends Weapon {
             this.fireSound?.play();
 
             // Spawn a bullet!
-            new Bullet(this.scene as Level1, x, y, dir, 'projectile_spr', 5)
+            new Bullet(this.scene as Level1, x, y, dir, 10, 'projectile_spr', 5)
                 .setScale(0.6)
                 .setName(`bullet_${Date.now()}`);
 

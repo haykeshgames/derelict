@@ -34,6 +34,11 @@ export class LoadingScene extends Scene {
             frameHeight: 64
         });
         
+        this.load.spritesheet('ui_spr', 'spritesheets/ui-32-32.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        
         this.load.image({key: 'space-tiles-32-32', url: 'tilemaps/tiles/space-tiles-32-32.png'});
         this.load.image({key: 'items-tiles-32-32', url: 'tilemaps/tiles/items-tiles-32-32.png'});
         this.load.image({key: 'space-tiles-32-32-updated', url: 'tilemaps/tiles/space-tiles-32-32-updated.png'});
@@ -41,12 +46,14 @@ export class LoadingScene extends Scene {
         this.load.tilemapTiledJSON('ship', 'tilemaps/json/ship-level-1.json');
         
         this.load.image('spark', 'particles/yellow.png');
+        this.load.image('enemyHitSpark', 'particles/blue.png');
         
         this.load.audio('bgmusic', 'music/bg.mp3');
         this.load.audio('death', 'sfx/death.wav');
         this.load.audio('pickup', 'sfx/pickup.wav');
         this.load.audio('fireAutoRifle', 'sfx/laser.wav');
         this.load.audio('bulletHitWall', 'sfx/hit.wav');
+        this.load.audio('bulletHitEnemy', 'sfx/hit.wav');
         this.load.audio('noAmmo', 'sfx/noammo.wav');
         this.load.audio('pistolFire', 'sfx/pistolfire.wav');
         this.load.audio('weaponSwap', 'sfx/weaponswap.wav');

@@ -25,7 +25,7 @@ export class Player extends Actor {
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_spr');
-
+        
         this.pistol = new Pistol(scene, this);
         this.autoRifle = new AutoRifle(scene, this);
         this._weapon = this.autoRifle;

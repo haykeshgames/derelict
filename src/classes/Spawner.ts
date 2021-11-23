@@ -8,7 +8,7 @@ export class Spawner extends Phaser.GameObjects.GameObject {
     private spawnAmount !: integer;
     private spawnCount = 0;
     private lastSpawnTime !: number;
-
+    
     get isFinishedSpawning() : boolean {
         return this.spawnCount >= this.spawnAmount;
     }

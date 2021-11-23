@@ -18,7 +18,7 @@ export class HUDScene extends Scene {
   private hpValueHandler : (count: number) => void;
   private hpBars !: GameObjects.Rectangle[];
   private hpTweens !: Tweens.Tween[];
-
+  
   private ammoCount !: Text;
   private ammoBars !: GameObjects.Rectangle[];
   private ammoTweens !: Tweens.Tween[];

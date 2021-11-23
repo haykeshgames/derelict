@@ -5,23 +5,33 @@ import { Enemy } from './enemy';
 export class Bullet extends Actor {
     private SPEED = 500;
     private MAX_TRAVEL = 350;
-    private startPosition : Phaser.Math.Vector2;
-    private sparksManager !: Phaser.GameObjects.Particles.ParticleEmitterManager;
+    private startPosition: Phaser.Math.Vector2;
+    private sparksManager!: Phaser.GameObjects.Particles.ParticleEmitterManager;
+    private enemySparksManager!: Phaser.GameObjects.Particles.ParticleEmitterManager;
 
-    get hitWallSound() : Phaser.Sound.BaseSound {
+    private damage: integer;
+
+    get hitWallSound(): Phaser.Sound.BaseSound {
         return this.scene?.sound.get('bulletHitWall');
     }
-
+    
+    get hitEnemySound() : Phaser.Sound.BaseSound {
+        return this.scene?.sound.get('bulletHitEnemy');
+    }
+    
     constructor(
         scene: Level1,
-        x: number, 
+        x: number,
         y: number,
         direction: Phaser.Math.Vector2,
+        damage: integer,
         texture: string,
-        frame ?: string | number
+        frame?: string | number
     ) {
         super(scene, x, y, texture, frame);
-
+        
+        this.damage = damage;
+        
         this.setRotation(direction.angle());
 
         this.startPosition = new Phaser.Math.Vector2(x, y);
@@ -33,39 +43,54 @@ export class Bullet extends Actor {
         // size of the sprite is 6x6, centered in a 32x32 image
         // TODO: make the bullet seem to hit the middle of northern walls rather than the bottom
         this.getBody().setOffset(13, 13);
-
+        
         this.setVelocity(direction.x * this.SPEED, direction.y * this.SPEED);
-
+        
         this.sparksManager = scene.add.particles('spark');
+        this.enemySparksManager = scene.add.particles('enemyHitSpark');
     }
 
-    public onHitEnemy(enemy : Enemy) : void {
-        enemy.onKill();
-        this.destroy();
-    }
-
-    public onHitWall() : void {
+    public onHitEnemy(enemy: Enemy): void {
+        enemy.takeDamage(this.damage);
+        
         this.hitWallSound?.play();
         this.destroy();
-
-        this.sparksManager.createEmitter({
-          x: this.x,
-          y: this.y,
-          speed: 150,
-          scale: 0.03,
-          quantity: 10,
-          maxParticles: 20,
-          lifespan: 80,
-
-          blendMode: Phaser.BlendModes.ADD
+        
+        this.enemySparksManager.createEmitter({
+            x: this.x,
+            y: this.y,
+            speed: 150,
+            scale: 0.03,
+            quantity: 0.5 * this.damage,
+            maxParticles: 1 * this.damage, 
+            lifespan: 80,
+            
+            blendMode: Phaser.BlendModes.ADD
         });
     }
 
-    preUpdate() : void {
+    public onHitWall(): void {
+        this.hitWallSound?.play();
+        this.destroy();
+        
+        this.sparksManager.createEmitter({
+            x: this.x,
+            y: this.y,
+            speed: 150,
+            scale: 0.03,
+            quantity: 0.5 * this.damage,
+            maxParticles: 1 * this.damage, 
+            lifespan: 80,
+            
+            blendMode: Phaser.BlendModes.ADD
+        });
+    }
+
+    preUpdate(): void {
         // Check if we hit an enemy!
 
         // Check if we've traveled too far from our start, and if so destroy us
-        const {position} = this.getBody(),
+        const { position } = this.getBody(),
             distance = position.distance(this.startPosition); // TODO: Inefficient - use distance squared
 
         if (distance >= this.MAX_TRAVEL) {
