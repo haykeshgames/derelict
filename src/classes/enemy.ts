@@ -38,6 +38,7 @@ export class Enemy extends Actor {
         // PHYSICS MODEL
         this.getBody().setSize(32, 32);
         this.getBody().setOffset(0, 0);
+        this.setImmovable(true);
         
         this.initAnimations();
     }
