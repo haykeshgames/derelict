@@ -82,7 +82,6 @@ export class Enemy extends Actor {
             this.onKill();
         } else {
             const frame = Math.round(this.health / 100 * 10);
-            console.log('health', this.health, 'frame', frame);
             this.hpBar.setFrame(frame);
         }
     }
