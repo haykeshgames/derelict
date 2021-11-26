@@ -56,17 +56,17 @@ export class Door extends Physics.Arcade.Sprite {
         if (this.doorType === DOOR_TYPE.NORTH || this.doorType === DOOR_TYPE.SOUTH) {
             if(open) {
                 this.anims.play('door_open', true);
-                this.openCloseSound?.play({delay: 1});
             } else {
                 this.anims.play('door_close', true);
                 this.anims.chain('door_idle');
-                this.openCloseSound?.play();
             }
         }
 
         if(open) {
+            this.openCloseSound?.play({delay: 1});
             this.disableBody();
         } else {
+            this.openCloseSound?.play();
             this.enableBody(false, 0, 0, true, true);
         }
     }
