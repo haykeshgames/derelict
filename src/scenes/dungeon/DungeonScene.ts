@@ -1,18 +1,18 @@
 import Dungeon from '@mikewesthad/dungeon';
 import { Scene, Tilemaps } from 'phaser';
-import { EVENTS_NAME, GameStatus } from '../../consts';
+import { DOOR_TYPE, EVENTS_NAME, GameStatus } from '../../consts';
 import { Bullet } from '../../classes/Bullet';
 import { DungeonRoom } from '../../classes/DungeonRoom';
 import { Enemy } from '../../classes/enemy';
 import { Player } from '../../classes/Player';
 import { Chest } from '../../classes/Chest';
+import { Door } from '../../classes/Door';
 
 export class DungeonScene extends Scene {
     private dungeon!: Dungeon;
     private map!: Tilemaps.Tilemap;
     public groundLayer!: Tilemaps.TilemapLayer;
     private wallLayer!: Tilemaps.TilemapLayer;
-    private doorLayer!: Tilemaps.TilemapLayer;
     private stuffLayer!: Tilemaps.TilemapLayer;
     private shadowLayer!: Tilemaps.TilemapLayer;
 
@@ -21,6 +21,7 @@ export class DungeonScene extends Scene {
     private enemyGroup!: Phaser.GameObjects.Group;
     private bulletGroup!: Phaser.GameObjects.Group;
     private chestGroup!: Phaser.GameObjects.Group;
+    private doorGroup!: Phaser.GameObjects.Group;
 
     private dungeonRooms: Array<DungeonRoom> = [];
     private activeDungeonRoom!: DungeonRoom | null | undefined;
@@ -90,8 +91,8 @@ export class DungeonScene extends Scene {
             this.map.heightInPixels / 2
         );
         this.physics.add.collider(this.player, this.wallLayer);
-        this.physics.add.collider(this.player, this.doorLayer);
         this.physics.add.collider(this.player, this.stuffLayer);
+        this.physics.add.collider(this.player, this.doorGroup);
     }
 
     initEnemies() {
@@ -165,6 +166,7 @@ export class DungeonScene extends Scene {
     }
 
     initMap() {
+        this.doorGroup = this.add.group();
         this.dungeon = new Dungeon({
             width: 50,
             height: 50,
@@ -184,24 +186,17 @@ export class DungeonScene extends Scene {
         });
 
         const wallFloorTileset = map.addTilesetImage('space-tiles-32-32-updated');
-        const itemTileset = map.addTilesetImage('items-tiles-32-32-updated');
-        itemTileset.firstgid = 10000;
 
         const groundLayer = map.createBlankLayer('Ground', wallFloorTileset),
             wallLayer = map.createBlankLayer('Walls', wallFloorTileset),
-            doorLayer = map.createBlankLayer('Doors', [wallFloorTileset, itemTileset]),
-            stuffLayer = map.createBlankLayer('Stuff', [wallFloorTileset, itemTileset]),
+            stuffLayer = map.createBlankLayer('Stuff', wallFloorTileset),
             shadowLayer = map.createBlankLayer('Shadow', wallFloorTileset).fill(107);
         
-        // Doors cover most things
-        doorLayer.setDepth(99);
-
         // Shadows cover everything
         shadowLayer.setDepth(999);
 
         this.map = map;
         this.wallLayer = wallLayer;
-        this.doorLayer = doorLayer;
         this.stuffLayer = stuffLayer;
         this.shadowLayer = shadowLayer;
         this.groundLayer = groundLayer;
@@ -236,36 +231,60 @@ export class DungeonScene extends Scene {
 
             // Doors
             const doors = room.getDoorLocations();
+            
+            let roomDoorGroup = this.add.group();
             doors.forEach((doorLoc) => {
                 const { x: doorX, y: doorY } = doorLoc;
                 if (doorY === 0) {
                     // Top Door
                     groundLayer.putTileAt(71, x + doorX - 1, y + doorY);
                     wallLayer.putTileAt(71, x + doorX - 1, y + doorY); // poke a hole in the wall
-                    doorLayer.putTileAt(408 + itemTileset.firstgid, x + doorX - 1, y + doorY); // door/path
                     wallLayer.putTileAt(377, x + doorX - 2, y + doorY); // left wall connector
                     wallLayer.putTileAt(373, x + doorX, y + doorY); // right wall connector
+                    
+                    const worldX = this.wallLayer.tileToWorldX(x + doorX - 1),
+                        worldY = this.wallLayer.tileToWorldY(y + doorY);
+                    let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.NORTH);
+                    this.doorGroup.add(doorSpr);
+                    roomDoorGroup.add(doorSpr);
                 } else if (doorY === height - 1) {
                     // Bottom Door
                     groundLayer.putTileAt(71, x + doorX - 1, y + doorY + 1);
                     wallLayer.putTileAt(71, x + doorX - 1, y + doorY); // poke a hole in the wall
-                    doorLayer.putTileAt(408 + itemTileset.firstgid, x + doorX - 1, y + doorY); // door/path
                     wallLayer.putTileAt(7, x + doorX - 2, y + doorY); // left wall connector
                     wallLayer.putTileAt(3, x + doorX, y + doorY); // right wall connector
+
+                    const worldX = this.wallLayer.tileToWorldX(x + doorX - 1),
+                        worldY = this.wallLayer.tileToWorldY(y + doorY);
+                    
+                    let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.SOUTH);
+                    this.doorGroup.add(doorSpr);
+                    roomDoorGroup.add(doorSpr);
                 } else if (doorX === 0) {
                     // Left Door
                     groundLayer.putTileAt(71, x + doorX, y + doorY - 1);
                     wallLayer.putTileAt(71, x + doorX, y + doorY - 1); // poke a hole in the wall
-                    doorLayer.putTileAt(305, x + doorX, y + doorY - 1); // door/path
                     wallLayer.putTileAt(306, x + doorX, y + doorY - 2); // top wall connector
                     wallLayer.putTileAt(231, x + doorX, y + doorY); // top wall connector
+
+                    const worldX = this.wallLayer.tileToWorldX(x + doorX),
+                        worldY = this.wallLayer.tileToWorldY(y + doorY - 1);
+                
+                    let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.WEST);
+                    this.doorGroup.add(doorSpr);
+                    roomDoorGroup.add(doorSpr);
                 } else if (doorX === width - 1) {
                     // Right Door
                     groundLayer.putTileAt(71, x + doorX, y + doorY - 1);
                     wallLayer.putTileAt(71, x + doorX, y + doorY - 1); // poke a hole in the wall
-                    doorLayer.putTileAt(297, x + doorX, y + doorY - 1);
                     wallLayer.putTileAt(296, x + doorX, y + doorY - 2); // top wall connector
                     wallLayer.putTileAt(223, x + doorX, y + doorY); // top wall connector
+                    const worldX = this.wallLayer.tileToWorldX(x + doorX),
+                        worldY = this.wallLayer.tileToWorldY(y + doorY - 1);
+                
+                    let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.EAST);
+                    this.doorGroup.add(doorSpr);
+                    roomDoorGroup.add(doorSpr);
                 }
             });
             
@@ -276,6 +295,7 @@ export class DungeonScene extends Scene {
                     this,
                     this.player,
                     groundLayer,
+                    roomDoorGroup,
                     stuffLayer,
                     shadowLayer
                 )
@@ -284,7 +304,6 @@ export class DungeonScene extends Scene {
 
         // Collide with everything except empty tiles or floor tiles
         wallLayer.setCollisionByExclusion([71, -1]);
-        doorLayer.setCollisionByExclusion([408 + itemTileset.firstgid, 305, 297, 71, -1]);
         stuffLayer.setCollisionByExclusion([-1]);
 
         this.physics.world.setBounds(
@@ -298,10 +317,6 @@ export class DungeonScene extends Scene {
     private showDebugWalls(): void {
         const debugGraphics = this.add.graphics().setAlpha(0.5);
         this.wallLayer.renderDebug(debugGraphics, {
-            tileColor: null,
-            collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255)
-        });
-        this.doorLayer.renderDebug(debugGraphics, {
             tileColor: null,
             collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255)
         });

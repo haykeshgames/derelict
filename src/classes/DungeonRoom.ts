@@ -1,23 +1,37 @@
 import { Room } from '@mikewesthad/dungeon';
-import { Tilemaps } from 'phaser';
+import { Tilemaps, Utils } from 'phaser';
 import { DungeonScene } from '../scenes/dungeon/DungeonScene';
 import { GreenTank } from './GreenTank';
 import { Player } from './Player';
 import { Spawner } from './Spawner';
 import { Chest } from './Chest';
+import { Door } from './Door';
 
 export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private groundLayer: Tilemaps.TilemapLayer;
+    private doorGroup: Phaser.GameObjects.Group;
     private stuffLayer: Tilemaps.TilemapLayer;
     private shadowLayer: Tilemaps.TilemapLayer;
     private player: Player;
+    private isFinished : boolean;
     public room: Room;
     private spawners: Array<Spawner> = [];
 
+
     get isFinishedSpawning() : boolean {
-        return this.spawners.every((spawner) => {
+        if(this.isFinished) {
+            return this.isFinished;
+        }
+
+        this.isFinished = this.spawners.every((spawner) => {
             return spawner.isFinishedSpawning;
         });
+
+        if (this.isFinished) {
+            this.setRoomClear();
+        }
+        
+        return this.isFinished;
     }
 
     setActive(active: boolean): this {
@@ -39,6 +53,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         scene: DungeonScene,
         player: Player,
         groundLayer: Tilemaps.TilemapLayer,
+        doorGroup: Phaser.GameObjects.Group,
         stuffLayer: Tilemaps.TilemapLayer,
         shadowLayer: Tilemaps.TilemapLayer
     ) {
@@ -49,8 +64,10 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         this.room = room;
         this.player = player;
         this.groundLayer = groundLayer;
+        this.doorGroup = doorGroup;
         this.stuffLayer = stuffLayer;
         this.shadowLayer = shadowLayer;
+        this.isFinished = false;
         
         // Generate some spawners in the room
         const numSpawners = Phaser.Math.Between(1, 3);
@@ -109,6 +126,12 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         // We are becoming active - brighten us up
         this.setRoomAlpha(0);
         this.spawners.forEach((it) => it.setActive(true));
+
+        this.doorGroup.getChildren().forEach((door) => {
+            let doorSpr = door as Door;
+            doorSpr.setOpen(false);
+        });
+
     }
 
     private onDeactivate(): void {
@@ -127,5 +150,12 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             width,
             height
         );
+    }
+
+    private setRoomClear() {
+        this.doorGroup.getChildren().forEach((door) => {
+            let doorSpr = door as Door;
+            doorSpr.setOpen(true);
+        });
     }
 }

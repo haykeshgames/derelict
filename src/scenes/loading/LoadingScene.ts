@@ -24,7 +24,7 @@ export class LoadingScene extends Scene {
             frameHeight: 32,
         });
         
-        this.load.spritesheet('item_spr', 'spritesheets/items-32-32.png', {
+        this.load.spritesheet('item_spr', 'tilemaps/tiles/items-tiles-32-32-updated.png', {
             frameWidth: 32,
             frameHeight: 32,
         });
@@ -32,6 +32,11 @@ export class LoadingScene extends Scene {
         this.load.spritesheet('tank_spr', 'spritesheets/items-32-32.png', {
             frameWidth: 32,
             frameHeight: 64
+        });
+
+        this.load.spritesheet('wall_spr', 'tilemaps/tiles/space-tiles-32-32-updated.png', {
+            frameWidth: 32,
+            frameHeight: 32
         });
         
         this.load.spritesheet('ui_spr', 'spritesheets/ui-32-32.png', {

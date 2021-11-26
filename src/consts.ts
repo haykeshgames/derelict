@@ -13,3 +13,10 @@ export enum GameStatus {
     WIN,
     LOSE,
 }
+
+export enum DOOR_TYPE {
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST
+}
