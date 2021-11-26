@@ -42,6 +42,10 @@ export class Door extends Physics.Arcade.Sprite {
         return this.body as Physics.Arcade.Body;
     }
 
+    get openCloseSound(): Phaser.Sound.BaseSound {
+        return this.scene?.sound.get('doorOpenClose');
+    }
+
     public setOpen(open : boolean) : void {
         if(open === this.isOpen) {
             return;
@@ -52,9 +56,11 @@ export class Door extends Physics.Arcade.Sprite {
         if (this.doorType === DOOR_TYPE.NORTH || this.doorType === DOOR_TYPE.SOUTH) {
             if(open) {
                 this.anims.play('door_open', true);
+                this.openCloseSound?.play({delay: 1});
             } else {
                 this.anims.play('door_close', true);
                 this.anims.chain('door_idle');
+                this.openCloseSound?.play();
             }
         }
 

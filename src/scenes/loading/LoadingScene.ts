@@ -62,6 +62,7 @@ export class LoadingScene extends Scene {
         this.load.audio('noAmmo', 'sfx/noammo.wav');
         this.load.audio('pistolFire', 'sfx/pistolfire.wav');
         this.load.audio('weaponSwap', 'sfx/weaponswap.wav');
+        this.load.audio('doorOpenClose', 'sfx/dooropenclose.wav');
     }
 
     // Called when the scene is created
@@ -72,6 +73,7 @@ export class LoadingScene extends Scene {
         this.sound.add('noAmmo');
         this.sound.add('pistolFire');
         this.sound.add('weaponSwap');
+        this.sound.add('doorOpenClose');
         
         this.scene.start('dungeon-scene');
         this.scene.start('ui-scene');
