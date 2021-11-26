@@ -87,6 +87,10 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         
         super.setActive(false);
         this.spawners.forEach((it) => it.setActive(false));
+        this.doorGroup.getChildren().forEach((door) => {
+            let doorSpr = door as Door;
+            doorSpr.setActive(true);
+        });
     }
     
     private getRandomTile() {
@@ -126,6 +130,10 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         // We are becoming active - brighten us up
         this.setRoomAlpha(0);
         this.spawners.forEach((it) => it.setActive(true));
+
+        if(this.isFinished) {
+            return;
+        }
 
         this.doorGroup.getChildren().forEach((door) => {
             let doorSpr = door as Door;
