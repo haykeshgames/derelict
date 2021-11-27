@@ -6,7 +6,8 @@ export enum EVENTS_NAME {
     playerReload = 'player-reload',
     weaponSwap = 'weapon-swap',
     playerHp = 'player-hp',
-    enemyDeath = 'enemy-death'
+    enemyDeath = 'enemy-death',
+    enemyAdded = 'enemy-death'
 }
 
 export enum GameStatus {

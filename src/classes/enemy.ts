@@ -32,9 +32,6 @@ export class Enemy extends Actor {
         this.hpBar = scene.add.image(this.x - this.width / 2, this.y - this.height, 'ui_spr', 10);
         this.hpBar.setScale(0.8);
         
-        // ADD TO SCENE
-        scene.addEnemy(this);
-        
         // PHYSICS MODEL
         this.getBody().setSize(32, 32);
         this.getBody().setOffset(0, 0);
@@ -100,7 +97,7 @@ export class Enemy extends Actor {
         // Stop physics once we die
         this.disableBody();
         
-        this.scene.game.events.emit(EVENTS_NAME.enemyDeath);
+        this.scene.game.events.emit(EVENTS_NAME.enemyDeath, this);
     }
     
     public setTarget(target: Player): void {

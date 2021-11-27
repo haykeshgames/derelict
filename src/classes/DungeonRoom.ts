@@ -2,10 +2,11 @@ import { Room } from '@mikewesthad/dungeon';
 import { Tilemaps, Utils } from 'phaser';
 import { DungeonScene } from '../scenes/dungeon/DungeonScene';
 import { GreenTank } from './GreenTank';
-import { Player } from './Player';
 import { Spawner } from './Spawner';
 import { Chest } from './Chest';
 import { Door } from './Door';
+import { Enemy } from './enemy';
+import { EVENTS_NAME } from '../consts';
 
 export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private groundLayer: Tilemaps.TilemapLayer;
@@ -15,7 +16,10 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private isFinished : boolean;
     public room: Room;
     private spawners: Array<Spawner> = [];
+    private enemies: Array<Enemy> = [];
 
+    private enemyDeathHandler : (enemy : Enemy) => void;
+    private enemyAddedHandler : (enemy : Enemy) => void;
 
     get isFinishedSpawning() : boolean {
         if(this.isFinished) {
@@ -75,7 +79,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             const worldX = this.groundLayer.tileToWorldX(x),
                 worldY = this.groundLayer.tileToWorldY(y);
             
-            this.spawners.push(new Spawner(scene, worldX, worldY));
+            this.spawners.push(new Spawner(scene, worldX, worldY, this));
         }
 
         // Fill the room with other stuff
@@ -88,6 +92,24 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             let doorSpr = door as Door;
             doorSpr.setActive(true);
         });
+
+        this.enemyDeathHandler = (enemy : Enemy) => {
+            const index = this.enemies.indexOf(enemy);
+            if(index === -1) {
+                return;
+            }
+
+            this.enemies.splice(index, 1);
+        }
+
+        this.enemyAddedHandler = (enemy : Enemy) => {
+            if(room.isInBounds(enemy.x, enemy.y)) {
+                this.enemies.push(enemy);
+            }
+        }
+
+        this.on(EVENTS_NAME.enemyDeath, this.enemyDeathHandler);
+        this.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
     }
     
     private getRandomTile() {
@@ -162,5 +184,9 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             let doorSpr = door as Door;
             doorSpr.setOpen(true);
         });
+    }
+
+    public addEnemy(enemy : Enemy) {
+        this.enemies.push(enemy);
     }
 }

@@ -26,6 +26,8 @@ export class DungeonScene extends Scene {
     private dungeonRooms: Array<DungeonRoom> = [];
     private activeDungeonRoom!: DungeonRoom | null | undefined;
 
+    private enemyAddedHandler : (enemy : Enemy) => void;
+
     get isFinishedSpawning() : boolean {
         return this.dungeonRooms.every((room) => {
             return room.isFinishedSpawning;
@@ -34,11 +36,11 @@ export class DungeonScene extends Scene {
 
     constructor() {
         super('dungeon-scene');
-    }
-
-    public addEnemy(enemy: Enemy): void {
-        this.enemyGroup.add(enemy, true);
-        this.physics.add.existing(enemy);
+        
+        this.enemyAddedHandler = (enemy : Enemy) => {
+            this.enemyGroup.add(enemy, true);
+            this.physics.add.existing(enemy);
+        }
     }
 
     public addBullet(bullet: Bullet): void {
@@ -60,6 +62,8 @@ export class DungeonScene extends Scene {
         this.initBullets();
         this.initCamera();
         this.initChests();
+
+        this.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
     }
 
     update(): void {
