@@ -6,17 +6,18 @@ import { Enemy } from './enemy';
 export class Spawner extends Phaser.GameObjects.GameObject {
     private x : number;
     private y : number;
-    private room : DungeonRoom;
     private spawnRate !: number;
     private spawnAmount !: integer;
     private spawnCount = 0;
-    private lastSpawnTime !: number;
+    private timerEvent !: Phaser.Time.TimerEvent;
+    
+    private maybeSpawnEnemy : () => void;
     
     get isFinishedSpawning() : boolean {
         return this.spawnCount >= this.spawnAmount;
     }
     
-    constructor(scene: DungeonScene, x: number, y: number, room: DungeonRoom) {
+    constructor(scene: DungeonScene, x: number, y: number) {
         super(scene, 'spawner');
         
         scene.add.existing(this);
@@ -26,24 +27,27 @@ export class Spawner extends Phaser.GameObjects.GameObject {
         
         this.spawnRate = 5000;
         this.spawnAmount = 3;
-        this.room = room;
+
+        this.maybeSpawnEnemy = () => {
+            if (this.isFinishedSpawning) return;
+            
+            this.spawnCount++;
+    
+            const enemy = new Enemy(this.scene as DungeonScene, this.x, this.y, 'enemy_spr', 60);
+    
+            this.scene.game.events.emit(EVENTS_NAME.enemyAdded, enemy);
+        }
+
+        this.timerEvent = this.scene.time.addEvent({
+            delay : this.spawnRate,
+            startAt: 4000,
+            repeat : this.spawnAmount,
+            paused : true,
+            callback : this.maybeSpawnEnemy,
+        });
     }
-    
-    preUpdate() : void {
-        this.maybeSpawnEnemy();
-    }    
-    
-    private maybeSpawnEnemy() : void {
-        if (this.isFinishedSpawning) return;
-        
-        const curTime = Date.now();
-        if ((curTime - this.lastSpawnTime) < this.spawnRate) return;
-        
-        this.spawnCount++;
-        this.lastSpawnTime = Date.now();
-        
-        const dungeonScene = this.scene as DungeonScene;
-        const enemy = new Enemy(dungeonScene, this.x, this.y, 'enemy_spr', 60);
-        this.scene.game.events.emit(EVENTS_NAME.enemyAdded, enemy);
+
+    public setPaused(paused : boolean) {
+        this.timerEvent.paused = paused;
     }
 }
