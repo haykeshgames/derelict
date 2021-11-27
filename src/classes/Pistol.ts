@@ -1,9 +1,9 @@
 import { EVENTS_NAME } from '../consts';
-import { Level1 } from '../scenes';
 import { Bullet } from './Bullet';
 import { Weapon } from './Weapon';
 import { Scene } from 'phaser';
 import { Player } from './Player';
+import { DungeonScene } from '../scenes';
 
 export class Pistol extends Weapon {
     get fireRate() : number {
@@ -33,7 +33,7 @@ export class Pistol extends Weapon {
             this.fireSound?.play();
             
             // Spawn a bullet
-            new Bullet(this.scene as Level1, x, y, dir, 25, 'projectile_spr', 15)
+            new Bullet(this.scene as DungeonScene, x, y, dir, 25, 'projectile_spr', 15)
                 .setScale(0.7)
                 .setName(`PistolBullet_${Date.now()}`);
             

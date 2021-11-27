@@ -1,4 +1,4 @@
-import { Level1 } from '../scenes';
+import { DungeonScene } from '../scenes';
 import { Actor } from './Actor';
 import { Enemy } from './enemy';
 
@@ -20,7 +20,7 @@ export class Bullet extends Actor {
     }
     
     constructor(
-        scene: Level1,
+        scene: DungeonScene,
         x: number,
         y: number,
         direction: Phaser.Math.Vector2,

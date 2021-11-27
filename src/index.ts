@@ -1,6 +1,5 @@
 import { Game, Types } from 'phaser';
-import { Level1, LoadingScene, HUDScene} from './scenes';
-import { DungeonScene } from './scenes/dungeon/DungeonScene';
+import { DungeonScene, LoadingScene, HUDScene} from './scenes';
 
 type GameConfigExtended = Types.Core.GameConfig & {
     winScore: number;
@@ -37,7 +36,7 @@ export const gameConfig: GameConfigExtended = {
         disableWebAudio: false
     },
     pixelArt: true,
-    scene: [LoadingScene, DungeonScene, Level1, HUDScene],
+    scene: [LoadingScene, DungeonScene, HUDScene],
     winScore: 40,
 };
 
