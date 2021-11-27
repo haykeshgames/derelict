@@ -9,10 +9,9 @@ import { Door } from './Door';
 
 export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private groundLayer: Tilemaps.TilemapLayer;
-    private doorGroup: Phaser.GameObjects.Group;
+    private doors: Array<Door>;
     private stuffLayer: Tilemaps.TilemapLayer;
     private shadowLayer: Tilemaps.TilemapLayer;
-    private player: Player;
     private isFinished : boolean;
     public room: Room;
     private spawners: Array<Spawner> = [];
@@ -51,9 +50,8 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
     constructor(
         room: Room,
         scene: DungeonScene,
-        player: Player,
         groundLayer: Tilemaps.TilemapLayer,
-        doorGroup: Phaser.GameObjects.Group,
+        doors: Array<Door>,
         stuffLayer: Tilemaps.TilemapLayer,
         shadowLayer: Tilemaps.TilemapLayer
     ) {
@@ -62,9 +60,8 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         scene.add.existing(this);
         
         this.room = room;
-        this.player = player;
         this.groundLayer = groundLayer;
-        this.doorGroup = doorGroup;
+        this.doors = doors;
         this.stuffLayer = stuffLayer;
         this.shadowLayer = shadowLayer;
         this.isFinished = false;
@@ -87,7 +84,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         
         super.setActive(false);
         this.spawners.forEach((it) => it.setActive(false));
-        this.doorGroup.getChildren().forEach((door) => {
+        this.doors.forEach((door) => {
             let doorSpr = door as Door;
             doorSpr.setActive(true);
         });
@@ -135,7 +132,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             return;
         }
 
-        this.doorGroup.getChildren().forEach((door) => {
+        this.doors.forEach((door) => {
             let doorSpr = door as Door;
             doorSpr.setOpen(false);
         });
@@ -161,7 +158,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
     }
 
     private setRoomClear() {
-        this.doorGroup.getChildren().forEach((door) => {
+        this.doors.forEach((door) => {
             let doorSpr = door as Door;
             doorSpr.setOpen(true);
         });

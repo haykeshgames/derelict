@@ -232,7 +232,7 @@ export class DungeonScene extends Scene {
             // Doors
             const doors = room.getDoorLocations();
             
-            let roomDoorGroup = this.add.group();
+            let doorArray = new Array<Door>();
             doors.forEach((doorLoc) => {
                 const { x: doorX, y: doorY } = doorLoc;
                 if (doorY === 0) {
@@ -246,7 +246,7 @@ export class DungeonScene extends Scene {
                         worldY = this.wallLayer.tileToWorldY(y + doorY);
                     let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.NORTH);
                     this.doorGroup.add(doorSpr);
-                    roomDoorGroup.add(doorSpr);
+                    doorArray.push(doorSpr);
                 } else if (doorY === height - 1) {
                     // Bottom Door
                     groundLayer.putTileAt(71, x + doorX - 1, y + doorY + 1);
@@ -259,7 +259,7 @@ export class DungeonScene extends Scene {
                     
                     let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.SOUTH);
                     this.doorGroup.add(doorSpr);
-                    roomDoorGroup.add(doorSpr);
+                    doorArray.push(doorSpr);
                 } else if (doorX === 0) {
                     // Left Door
                     groundLayer.putTileAt(71, x + doorX, y + doorY - 1);
@@ -272,7 +272,7 @@ export class DungeonScene extends Scene {
                 
                     let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.WEST);
                     this.doorGroup.add(doorSpr);
-                    roomDoorGroup.add(doorSpr);
+                    doorArray.push(doorSpr);
                 } else if (doorX === width - 1) {
                     // Right Door
                     groundLayer.putTileAt(71, x + doorX, y + doorY - 1);
@@ -284,7 +284,7 @@ export class DungeonScene extends Scene {
                 
                     let doorSpr = new Door(this, worldX, worldY, DOOR_TYPE.EAST);
                     this.doorGroup.add(doorSpr);
-                    roomDoorGroup.add(doorSpr);
+                    doorArray.push(doorSpr);
                 }
             });
             
@@ -293,9 +293,8 @@ export class DungeonScene extends Scene {
                 new DungeonRoom(
                     room,
                     this,
-                    this.player,
                     groundLayer,
-                    roomDoorGroup,
+                    doorArray,
                     stuffLayer,
                     shadowLayer
                 )
