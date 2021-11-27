@@ -20,6 +20,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
 
     private enemyDeathHandler : (enemy : Enemy) => void;
     private enemyAddedHandler : (enemy : Enemy) => void;
+    private roomClearedHandler : (room : DungeonRoom) => void;
 
     get isFinishedSpawning() : boolean {
         if(this.isFinished) {
@@ -30,10 +31,6 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             return spawner.isFinishedSpawning;
         });
 
-        if (this.isFinished) {
-            this.setRoomClear();
-        }
-        
         return this.isFinished;
     }
 
@@ -79,7 +76,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             const worldX = this.groundLayer.tileToWorldX(x),
                 worldY = this.groundLayer.tileToWorldY(y);
             
-            this.spawners.push(new Spawner(scene, worldX, worldY, this));
+            this.spawners.push(new Spawner(scene, worldX, worldY));
         }
 
         // Fill the room with other stuff
@@ -87,11 +84,6 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
         this.addGreenTank(x, y);
         
         super.setActive(false);
-        this.spawners.forEach((it) => it.setActive(false));
-        this.doors.forEach((door) => {
-            let doorSpr = door as Door;
-            doorSpr.setActive(true);
-        });
 
         this.enemyDeathHandler = (enemy : Enemy) => {
             const index = this.enemies.indexOf(enemy);
@@ -100,16 +92,37 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             }
 
             this.enemies.splice(index, 1);
+
+            if(this.enemies.length === 0 && this.isFinishedSpawning) {
+                this.scene.game.events.emit(EVENTS_NAME.roomCleared, this);
+            }
         }
 
         this.enemyAddedHandler = (enemy : Enemy) => {
-            if(room.isInBounds(enemy.x, enemy.y)) {
+            // return if enemy in array
+            if(this.enemies.indexOf(enemy) > -1) {
+                return;
+            }
+
+            const {x, y} = this.groundLayer.worldToTileXY(enemy.x, enemy.y);
+
+            // only add to the enemies array if in the room
+            if(room.isInBounds(x - room.x, y - room.y)) {
                 this.enemies.push(enemy);
             }
         }
 
-        this.on(EVENTS_NAME.enemyDeath, this.enemyDeathHandler);
-        this.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
+        this.roomClearedHandler = (room : DungeonRoom) => {
+            if(room !== this) {
+                return;
+            }
+
+            this.setRoomClear();
+        }
+
+        this.scene.game.events.on(EVENTS_NAME.enemyDeath, this.enemyDeathHandler);
+        this.scene.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
+        this.scene.game.events.on(EVENTS_NAME.roomCleared, this.roomClearedHandler);
     }
     
     private getRandomTile() {
@@ -148,7 +161,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private onActivate(): void {
         // We are becoming active - brighten us up
         this.setRoomAlpha(0);
-        this.spawners.forEach((it) => it.setActive(true));
+        this.spawners.forEach((it) => it.setPaused(false));
 
         if(this.isFinished) {
             return;
@@ -164,7 +177,7 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
     private onDeactivate(): void {
         // We are going inactive - darken us
         this.setRoomAlpha(0.8);
-        this.spawners.forEach((it) => it.setActive(false));
+        this.spawners.forEach((it) => it.setPaused(true));
     }
 
     private setRoomAlpha(alpha: number): void {
