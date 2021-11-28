@@ -102,6 +102,9 @@ export class HUDScene extends Scene {
 
     this.playerReloadHandler = (bulletsLoaded : number) => {
       for(let i = 0; i < this.ammoBars.length; i++) {
+        if(this.ammoTweens[i].isPlaying()) {
+          this.ammoTweens[i].stop();
+        }
         if (i < bulletsLoaded) {
           this.ammoBars[i].setAlpha(1);
         } else {
@@ -195,7 +198,7 @@ export class HUDScene extends Scene {
         targets: bar,
         alpha: 0,
         paused: true, 
-        duration: 1000
+        duration: 100
       })
 
       this.ammoTweens.push(tween);
@@ -228,7 +231,7 @@ export class HUDScene extends Scene {
         targets: bar,
         alpha: 0,
         paused: true, 
-        duration: 1000
+        duration: 100
       })
 
       this.hpTweens.push(tween);
