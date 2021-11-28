@@ -17,7 +17,7 @@ export class Player extends Actor {
 
     private pistol : Pistol;
     private autoRifle : AutoRifle;
-
+    
     private _weapon : Weapon;
     get weapon() : Weapon {
         return this._weapon;
@@ -29,7 +29,7 @@ export class Player extends Actor {
         this.pistol = new Pistol(scene, this);
         this.autoRifle = new AutoRifle(scene, this);
         this._weapon = this.autoRifle;
-
+        
         // Keys
         this.keyW = this.scene.input.keyboard.addKey('W');
         this.keyA = this.scene.input.keyboard.addKey('A');

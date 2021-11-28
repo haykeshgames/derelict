@@ -20,14 +20,15 @@ export class DungeonScene extends Scene {
 
     private enemyGroup!: Phaser.GameObjects.Group;
     private bulletGroup!: Phaser.GameObjects.Group;
+    private enemyBulletGroup!: Phaser.GameObjects.Group;
     private chestGroup!: Phaser.GameObjects.Group;
     private doorGroup!: Phaser.GameObjects.Group;
 
     private dungeonRooms: Array<DungeonRoom> = [];
     private activeDungeonRoom!: DungeonRoom | null | undefined;
-
+    
     private enemyAddedHandler : (enemy : Enemy) => void;
-
+    
     get isFinishedSpawning() : boolean {
         return this.dungeonRooms.every((room) => {
             return room.isFinishedSpawning;
@@ -44,7 +45,13 @@ export class DungeonScene extends Scene {
     }
 
     public addBullet(bullet: Bullet): void {
-        this.bulletGroup.add(bullet, true);
+        
+        if (bullet.isEnemyBullet) {
+            this.enemyBulletGroup.add(bullet, true);
+        } else {
+            this.bulletGroup.add(bullet, true);            
+        }
+        
         this.physics.add.existing(bullet);
     }
 
@@ -62,7 +69,7 @@ export class DungeonScene extends Scene {
         this.initBullets();
         this.initCamera();
         this.initChests();
-
+        
         this.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
     }
 
@@ -113,6 +120,7 @@ export class DungeonScene extends Scene {
 
     initBullets() {
         this.bulletGroup = this.add.group();
+        this.enemyBulletGroup = this.add.group();
 
         // Bullets collide with enemies
         this.physics.add.collider(
@@ -122,10 +130,18 @@ export class DungeonScene extends Scene {
                 (bullet as Bullet).onHitEnemy(enemy as Enemy);
             }
         );
+        
+        this.physics.add.collider(
+            this.enemyBulletGroup,
+            this.player,
+            (bullet, player) => {
+                (bullet as Bullet).onHitPlayer(player as Player);
+            }
+        )
 
         // Bullets collide with walls
         this.physics.add.collider(
-            this.bulletGroup,
+            [this.bulletGroup, this.enemyBulletGroup],
             this.wallLayer,
             (bullet) => {
                 (bullet as Bullet).onHitWall();
@@ -134,7 +150,7 @@ export class DungeonScene extends Scene {
 
         // Bullets collide with walls
         this.physics.add.collider(
-            this.bulletGroup,
+            [this.bulletGroup, this.enemyBulletGroup],
             this.stuffLayer,
             (bullet) => {
                 (bullet as Bullet).onHitWall();
@@ -176,12 +192,12 @@ export class DungeonScene extends Scene {
             height: 50,
             doorPadding: 3,
             rooms: {
-                width: { min: 7, max: 15, onlyOdd: true },
-                height: { min: 7, max: 15, onlyOdd: true },
+                width: { min: 9, max: 23, onlyOdd: true },
+                height: { min: 9, max: 23, onlyOdd: true },
                 maxRooms: 12
             }
         });
-
+        
         const map = this.make.tilemap({
             tileWidth: 32,
             tileHeight: 32,

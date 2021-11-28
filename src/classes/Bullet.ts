@@ -1,21 +1,29 @@
 import { DungeonScene } from '../scenes';
 import { Actor } from './Actor';
 import { Enemy } from './enemy';
+import { Player } from './Player';
 
 export class Bullet extends Actor {
-    private SPEED = 500;
+    private speed: number;
     private MAX_TRAVEL = 350;
     private startPosition: Phaser.Math.Vector2;
     private sparksManager!: Phaser.GameObjects.Particles.ParticleEmitterManager;
     private enemySparksManager!: Phaser.GameObjects.Particles.ParticleEmitterManager;
-
+    private playerSparksManager!: Phaser.GameObjects.Particles.ParticleEmitterManager;
+    
     private damage: integer;
-
+    
+    public isEnemyBullet: boolean;
+    
     get hitWallSound(): Phaser.Sound.BaseSound {
         return this.scene?.sound.get('bulletHitWall');
     }
     
     get hitEnemySound() : Phaser.Sound.BaseSound {
+        return this.scene?.sound.get('bulletHitEnemy');
+    }
+    
+    get hitPlayerSound() : Phaser.Sound.BaseSound {
         return this.scene?.sound.get('bulletHitEnemy');
     }
     
@@ -25,17 +33,21 @@ export class Bullet extends Actor {
         y: number,
         direction: Phaser.Math.Vector2,
         damage: integer,
+        speed = 500,
+        isEnemyBullet = false,
         texture: string,
         frame?: string | number
     ) {
         super(scene, x, y, texture, frame);
         
+        this.speed = speed;
         this.damage = damage;
+        this.isEnemyBullet = isEnemyBullet;
         
         this.setRotation(direction.angle());
-
+        
         this.startPosition = new Phaser.Math.Vector2(x, y);
-
+        
         scene.addBullet(this);
 
         // Physics
@@ -44,10 +56,11 @@ export class Bullet extends Actor {
         // TODO: make the bullet seem to hit the middle of northern walls rather than the bottom
         this.getBody().setOffset(13, 13);
         
-        this.setVelocity(direction.x * this.SPEED, direction.y * this.SPEED);
+        this.setVelocity(direction.x * this.speed, direction.y * this.speed);
         
         this.sparksManager = scene.add.particles('spark');
         this.enemySparksManager = scene.add.particles('enemyHitSpark');
+        this.playerSparksManager = scene.add.particles('playerHitSpark');
     }
 
     public onHitEnemy(enemy: Enemy): void {
@@ -57,6 +70,25 @@ export class Bullet extends Actor {
         this.destroy();
         
         this.enemySparksManager.createEmitter({
+            x: this.x,
+            y: this.y,
+            speed: 150,
+            scale: 0.03,
+            quantity: 0.5 * this.damage,
+            maxParticles: 1 * this.damage, 
+            lifespan: 80,
+            
+            blendMode: Phaser.BlendModes.ADD
+        });
+    }
+    
+    public onHitPlayer(player: Player) {
+        player.getDamage(this.damage);
+        
+        this.hitPlayerSound?.play();
+        this.destroy();
+        
+        this.playerSparksManager.createEmitter({
             x: this.x,
             y: this.y,
             speed: 150,

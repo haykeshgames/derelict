@@ -33,7 +33,7 @@ export class Pistol extends Weapon {
             this.fireSound?.play();
             
             // Spawn a bullet
-            new Bullet(this.scene as DungeonScene, x, y, dir, 25, 'projectile_spr', 15)
+            new Bullet(this.scene as DungeonScene, x, y, dir, 25, 350, false, 'projectile_spr', 15)
                 .setScale(0.7)
                 .setName(`PistolBullet_${Date.now()}`);
             

@@ -40,7 +40,7 @@ export class Weapon {
     constructor(scene: Scene, player : Player) {
         this.scene = scene;
         this.player = player;
-
+        
         setTimeout(() => {
             this.scene.game.events.emit(EVENTS_NAME.ammoCount, this._ammo);
         });

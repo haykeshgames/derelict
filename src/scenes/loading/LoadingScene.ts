@@ -52,6 +52,7 @@ export class LoadingScene extends Scene {
         
         this.load.image('spark', 'particles/yellow.png');
         this.load.image('enemyHitSpark', 'particles/blue.png');
+        this.load.image('playerHitSpark', 'particles/red.png');
         
         this.load.audio('bgmusic', 'music/bg.mp3');
         this.load.audio('death', 'sfx/death.wav');

@@ -36,8 +36,8 @@ export class Actor extends Physics.Arcade.Sprite {
     public getHPValue() : number {
         return this.hp;
     }
-
-    protected checkFlip() : void {
+    
+    protected checkFlip() : void {        
         // Flip the texture when moving leftd
         if (this.body.velocity.x < 0) {
             this.flipX = true;
