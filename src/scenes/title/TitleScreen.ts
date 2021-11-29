@@ -16,7 +16,8 @@ export class TitleScreen extends Scene {
             this,
             this.game.scale.width / 2,
             this.game.scale.height * 0.4,
-            `At the edge of space, you answered the distress
+            `DERELICT\n
+At the edge of space, you answered the distress
 call of a station outpost. You ventured in, hoping
 to collect a reward. Instead, you discovered that
 the inhabitants are all mechano-insect hybrids.\n
