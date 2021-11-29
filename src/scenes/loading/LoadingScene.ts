@@ -76,8 +76,7 @@ export class LoadingScene extends Scene {
         this.sound.add('weaponSwap');
         this.sound.add('doorOpenClose');
         
-        this.scene.start('dungeon-scene');
-        this.scene.start('ui-scene');
+        this.scene.start('title-scene');
 
         // Play some bg music
         this.sound.play('bgmusic', {loop: true, volume: 0.5})
