@@ -71,6 +71,9 @@ export class DungeonScene extends Scene {
         this.initChests();
         
         this.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
+        this.events.once('shutdown', () => {
+            this.game.events.removeAllListeners();
+        });
     }
 
     update(): void {
