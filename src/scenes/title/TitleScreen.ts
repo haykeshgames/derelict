@@ -27,8 +27,12 @@ export class TitleScreen extends Scene {
         );
 
         this.input.on('pointerdown', () => {
-            this.scene.switch('dungeon-scene');
-            this.scene.start('ui-scene');
+            this.scene.transition({
+                target: 'dungeon-scene',
+                remove: true,
+                duration: 2000,
+                allowInput: false
+            });
         });
     }
 

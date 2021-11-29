@@ -69,10 +69,23 @@ export class DungeonScene extends Scene {
         this.initBullets();
         this.initCamera();
         this.initChests();
+
+        this.cameras.main.fadeIn(2000, 0, 0, 0);
         
         this.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
         this.events.once('shutdown', () => {
             this.game.events.removeAllListeners();
+        });
+
+        this.events.once('transitionstart', () => {
+            this.scene.pause();
+            this.scene.launch('ui-scene');
+            this.scene.pause('ui-scene');
+        });
+
+        this.events.once('transitioncomplete', () => {
+            this.scene.resume();
+            this.scene.resume('ui-scene');
         });
     }
 
