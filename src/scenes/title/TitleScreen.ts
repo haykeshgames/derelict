@@ -33,7 +33,7 @@ LEFT CLICK: Fire\n\nCLICK TO START`,
     
         this.gameStartPhrase.setPosition(
             this.game.scale.width / 2 - this.gameStartPhrase.width / 2,
-            this.game.scale.height * 0.4,
+            this.game.scale.height * 0.3,
         );
 
         this.input.on('pointerdown', () => {
