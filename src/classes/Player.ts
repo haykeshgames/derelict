@@ -16,7 +16,7 @@ export class Player extends Actor {
     private rHandler : (key : Phaser.Input.Keyboard.Key, event : KeyboardEvent) => void;
 
     // How fast we move
-    private speed = 250;
+    private speed = 200;
 
     private pistol : Pistol;
     private autoRifle : AutoRifle;
@@ -59,6 +59,7 @@ export class Player extends Actor {
         this.getBody().setSize(12, 16);
         this.getBody().setOffset(10,16);
 
+        this.setScale(1.4);
         this.initAnimations();
 
         setTimeout(() => {
