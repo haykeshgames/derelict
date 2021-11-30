@@ -23,7 +23,7 @@ to collect a reward. Instead, you discovered that
 the inhabitants are all mechano-insect hybrids.\n
 Now, you must fight to survive.\n
 CONTROLS
-WADS: Move
+WASD: Move
 TAB: Swap weapons
 R: Reload
 LEFT CLICK: Fire\n\nCLICK TO START`,
@@ -40,7 +40,7 @@ LEFT CLICK: Fire\n\nCLICK TO START`,
             this.scene.transition({
                 target: 'dungeon-scene',
                 remove: true,
-                duration: 2000,
+                duration: 300,
                 allowInput: false
             });
         });

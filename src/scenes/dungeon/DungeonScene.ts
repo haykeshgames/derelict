@@ -70,7 +70,7 @@ export class DungeonScene extends Scene {
         this.initCamera();
         this.initChests();
 
-        this.cameras.main.fadeIn(2000, 0, 0, 0);
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
         
         this.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
         this.events.once('shutdown', () => {
