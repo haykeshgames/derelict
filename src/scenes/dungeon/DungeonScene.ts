@@ -213,7 +213,7 @@ export class DungeonScene extends Scene {
             rooms: {
                 width: { min: 9, max: 23, onlyOdd: true },
                 height: { min: 9, max: 23, onlyOdd: true },
-                maxRooms: 1
+                maxRooms: 12
             }
         });
         
