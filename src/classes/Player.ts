@@ -12,6 +12,9 @@ export class Player extends Actor {
     private keyTab : Phaser.Input.Keyboard.Key;
     private keyR : Phaser.Input.Keyboard.Key;
 
+    private tabHandler : (key : Phaser.Input.Keyboard.Key, event : KeyboardEvent) => void;
+    private rHandler : (key : Phaser.Input.Keyboard.Key, event : KeyboardEvent) => void;
+
     // How fast we move
     private speed = 250;
 
@@ -38,8 +41,18 @@ export class Player extends Actor {
         this.keyTab = this.scene.input.keyboard.addKey('TAB', true, true);
         this.keyR = this.scene.input.keyboard.addKey('R');
 
-        this.keyTab.on('down', () => this.swapWeapons());
-        this.keyR.on('down', () => this.reloadWeapon());
+        this.tabHandler = (key : Phaser.Input.Keyboard.Key, event : KeyboardEvent) => { 
+            event.stopPropagation();
+            this.swapWeapons();
+        }
+
+        this.rHandler = (key : Phaser.Input.Keyboard.Key, event : KeyboardEvent) => {
+            event.stopPropagation();
+            this.reloadWeapon();
+        }
+
+        this.keyTab.on('down', this.tabHandler);
+        this.keyR.on('down', this.rHandler);
         
 
         // Physics
@@ -126,5 +139,15 @@ export class Player extends Actor {
 
     addAmmo(count : number) : void {
         this._weapon.addAmmo(count);
+    }
+
+    destroy() : void {
+        this.keyR.removeListener('down');
+        this.keyR.destroy();
+
+        this.keyTab.removeListener('down');
+        this.keyTab.destroy();
+
+        super.destroy();
     }
 }

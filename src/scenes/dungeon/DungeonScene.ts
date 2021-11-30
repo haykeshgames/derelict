@@ -75,6 +75,9 @@ export class DungeonScene extends Scene {
         this.game.events.on(EVENTS_NAME.enemyAdded, this.enemyAddedHandler);
         this.events.once('shutdown', () => {
             this.game.events.removeAllListeners();
+            this.input.keyboard.removeAllListeners();
+            this.input.keyboard.removeAllKeys(true);
+    
         });
 
         this.events.once('transitionstart', () => {
@@ -210,7 +213,7 @@ export class DungeonScene extends Scene {
             rooms: {
                 width: { min: 9, max: 23, onlyOdd: true },
                 height: { min: 9, max: 23, onlyOdd: true },
-                maxRooms: 12
+                maxRooms: 1
             }
         });
         
