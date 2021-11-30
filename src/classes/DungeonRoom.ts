@@ -167,11 +167,12 @@ export class DungeonRoom extends Phaser.GameObjects.GameObject {
             return;
         }
 
-        this.doors.forEach((door) => {
-            let doorSpr = door as Door;
-            doorSpr.setOpen(false);
-        });
-
+        setTimeout(() => {
+            this.doors.forEach((door) => {
+                let doorSpr = door as Door;
+                doorSpr.setOpen(false);
+            });
+        }, 2000);
     }
 
     private onDeactivate(): void {
